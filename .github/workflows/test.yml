@@ -3,7 +3,7 @@ name: test
 on:
   # Se ejecuta en cualquier PR cuya rama de destino sea main
   pull_request:
-     branches: [ main ]
+    branches: [ main ]
 
   # Opcional pero recomendable: validar también cuando algo se mergea / pushea a main
   push:
@@ -21,12 +21,17 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: 8.3 # <-- Confirmando: Usaremos PHP 8.3
           extensions: mbstring, intl, pcntl, bcmath, pdo, sqlite, pdo_sqlite
           coverage: none
           tools: composer:v2
 
+      # PASO ADICIONAL DE VERIFICACIÓN (Opcional, pero útil para depuración)
+      - name: Check PHP Version
+        run: php -v
+        
       - name: Install PHP dependencies
+        # Este comando ahora debería usar la versión 8.3 de PHP, pero necesita que tu composer.lock sea compatible.
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Copy .env
@@ -45,7 +50,7 @@ jobs:
   frontend:
     name: Frontend (Vite)
     runs-on: ubuntu-latest
-    needs: backend   # No corre frontend si backend ya falló
+    needs: backend    # No corre frontend si backend ya falló
 
     steps:
       - name: Checkout
