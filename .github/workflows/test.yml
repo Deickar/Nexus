@@ -47,7 +47,17 @@ jobs:
 
       - name: Copy .env
         run: cp .env.example .env
-
+      # --- NUEVOS PASOS CLAVE PARA FORZAR SQLITE ---
+      
+      - name: Configure SQLite for CI
+        run: |
+          # 1. Crea el directorio y el archivo de base de datos
+          mkdir -p database
+          touch database/database.sqlite
+          
+          # 2. Reemplaza la conexión MySQL por SQLite en el .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=database\/database.sqlite/' .env
       - name: Generate app key
         run: php artisan key:generate
 
