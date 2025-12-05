@@ -13,16 +13,25 @@ jobs:
   backend:
     name: Backend (Laravel)
     runs-on: ubuntu-latest
-    
-    # AGREGA ESTO AQUÍ ARRIBA DE "STEPS"
-    env:
-      DB_CONNECTION: sqlite
-      DB_DATABASE: database/database.sqlite
 
     steps:
-      # ... (tus pasos de checkout y setup php) ...
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4 # <-- Confirmando: Usaremos PHP 8.3
+          extensions: mbstring, intl, pcntl, bcmath, pdo, sqlite, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      # PASO ADICIONAL DE VERIFICACIÓN (Opcional, pero útil para depuración)
+      - name: Check PHP Version
+        run: php -v
+        
       - name: Install PHP dependencies
+        # Este comando ahora debería usar la versión 8.3 de PHP, pero necesita que tu composer.lock sea compatible.
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Copy .env
@@ -31,12 +40,30 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
-      # AGREGA ESTE PASO PARA CREAR EL ARCHIVO VACÍO
-      - name: Create SQLite Database
-        run: touch database/database.sqlite
-
+      # Si tus tests usan DB real, ajusta este paso (puedes usar SQLite in-memory o MySQL service)
       - name: Run migrations
         run: php artisan migrate --force
 
       - name: Run backend tests
         run: php artisan test
+
+  frontend:
+    name: Frontend (Vite)
+    runs-on: ubuntu-latest
+    needs: backend    # No corre frontend si backend ya falló
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
