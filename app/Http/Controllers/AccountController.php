@@ -18,11 +18,11 @@ class AccountController extends Controller
         // Por ahora solo valida y muestra un mesnaje.
 
         $request->validate([
-            'first_name'    => 'required|string|max:255',
-            'last_name'     => 'required|string|max:255',
-            'birth_date'    => 'required|date',
-            'phone'         => 'required|string|max:20',
-            'email'         => 'required|email',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email',
         ]);
 
         // Más adelante aquí:

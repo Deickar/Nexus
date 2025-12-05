@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
-//Pruebas de conexion a la base de datos
+// Pruebas de conexion a la base de datos
 Route::get('/prueba-db', function () {
     try {
         $r1 = DB::connection()->select('SELECT 1 as ok');
@@ -42,31 +42,33 @@ Route::get('/login', function () {
 Route::post('/login', function () {
     // Login falso para prueba
     session(['logged_in' => true]);
+
     return redirect('/home');
 });
 
-//ruta para olvide mi contrasena
+// ruta para olvide mi contrasena
 Route::get('/password', function () {
     return view('password');
 });
 
-//ruta para creacion de usuario
+// ruta para creacion de usuario
 Route::get('/register', function () {
     return view('register');
 });
 
-
 // 3. Home (protegido)
 Route::get('/home', function () {
-    if (!session('logged_in')) {
+    if (! session('logged_in')) {
         return redirect('/login');
     }
+
     return view('home');
 })->name('home');
 
-//. Logout
+// . Logout
 Route::post('/logout', function () {
     session()->flush();
+
     return redirect('/login');
 });
 
@@ -75,10 +77,9 @@ Route::get('/contacto', function () {
     return view('contact');
 })->name('contact');
 
-//Perfil usuario
+// Perfil usuario
 Route::get('/mi-cuenta/perfil', [AccountController::class, 'profile'])
     ->name('account.profile');
 
-    Route::post('/mi-cuenta/perfil', [AccountController::class, 'updateProfile'])
+Route::post('/mi-cuenta/perfil', [AccountController::class, 'updateProfile'])
     ->name('account.profile.update');
-    
