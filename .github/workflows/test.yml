@@ -1,24 +1,36 @@
+# Nombre del workflow. Aparecerá en la pestaña "Actions" de tu repositorio de GitHub.
 name: test
 
+# Define los eventos que dispararán la ejecución de este workflow.
 on:
-  # Se ejecuta en cualquier PR cuya rama de destino sea main
+  # Se ejecuta cuando se crea o actualiza un Pull Request que apunta a la rama 'main'.
+  # Es ideal para verificar que los cambios no rompen nada antes de integrarlos.
   pull_request:
     branches: [ main ]
 
-  # Opcional pero recomendable: validar también cuando algo se mergea / pushea a main
+  # Se ejecuta cuando se hace un 'push' (se suben cambios) directamente a la rama 'main'.
+  # Asegura que la rama principal siempre esté en un estado funcional.
   push:
     branches: [ main ]
 
+# Define el conjunto de trabajos (jobs) que se ejecutarán.
+# Los trabajos se ejecutan en paralelo por defecto, a menos que se especifique una dependencia.
 jobs:
+  # Primer trabajo: se encarga de todo lo relacionado con el backend (Laravel).
   backend:
     name: Backend (Laravel)
+    # Especifica el tipo de máquina virtual donde se ejecutará el trabajo. 'ubuntu-latest' es una opción común y versátil.
     runs-on: ubuntu-latest
 
+    # Contiene la secuencia de pasos que se ejecutarán en este trabajo.
     steps:
+      # 1. Descarga el código de tu repositorio a la máquina virtual del runner.
       - name: Checkout
         uses: actions/checkout@v4
 
-        # --- PASO DETECTIVE (AGREGA ESTO) ---
+      # --- PASO DE DEPURACIÓN ---
+      # Este paso es útil para diagnosticar problemas. Muestra la ruta actual y lista
+      # todos los archivos, ayudando a confirmar que el checkout y la estructura son correctos.
       - name: List files (Debug)
         run: |
           echo "La ruta actual es:"
@@ -27,64 +39,110 @@ jobs:
           ls -la
           echo "Buscando composer.json recursivamente:"
           find . -name "composer.json"
-      # ------------------------------------
 
+      # 2. Configura el entorno de PHP.
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4 # <-- Confirmando: Usaremos PHP 8.3
+          # Especifica la versión de PHP. Es crucial que coincida con la requerida por tu proyecto.
+          # Nota: Tu composer.json requiere ^8.2 y fija la plataforma en 8.3.0, pero aquí pides 8.4.
+          php-version: 8.4
+          # Lista de extensiones de PHP necesarias para que Laravel y sus dependencias funcionen.
           extensions: mbstring, intl, pcntl, bcmath, pdo, sqlite, pdo_sqlite
+          # Desactiva la generación de reportes de cobertura de código en este paso.
           coverage: none
+          # Instala herramientas adicionales. Aquí se instala Composer v2.
           tools: composer:v2
 
-      # PASO ADICIONAL DE VERIFICACIÓN (Opcional, pero útil para depuración)
+      # 3. (Opcional) Verifica la versión de PHP instalada para confirmar que el paso anterior funcionó.
       - name: Check PHP Version
         run: php -v
         
+      # 4. Instala las dependencias de PHP definidas en tu archivo 'composer.lock'.
       - name: Install PHP dependencies
-        # Este comando ahora debería usar la versión 8.3 de PHP, pero necesita que tu composer.lock sea compatible.
+        # --prefer-dist: Descarga los paquetes como archivos zip, más rápido.
+        # --no-interaction: No hace preguntas interactivas.
+        # --no-progress: Oculta la barra de progreso para un log más limpio.
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      # 5. Copia el archivo de ejemplo de variables de entorno para crear el archivo .env real.
+      # Las aplicaciones de Laravel necesitan este archivo para funcionar.
       - name: Copy .env
         run: cp .env.example .env
-      # --- NUEVOS PASOS CLAVE PARA FORZAR SQLITE ---
       
+      # --- 6. CONFIGURACIÓN DE LA BASE DE DATOS PARA PRUEBAS ---
+      # Para evitar configurar un servicio de base de datos completo (como MySQL),
+      # usamos SQLite, que es una base de datos basada en un solo archivo.
       - name: Configure SQLite for CI
         run: |
-          # 1. Crea el directorio y el archivo de base de datos
+          # 6.1. Asegura que el directorio 'database' exista y crea el archivo vacío para la BD.
           mkdir -p database
           touch database/database.sqlite
           
-          # 2. Reemplaza la conexión MySQL por SQLite en el .env
+          # 6.2. Modifica el archivo .env en tiempo de ejecución para usar SQLite.
+          # 'sed' es una herramienta de línea de comandos para editar texto.
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
           sed -i 's/^DB_DATABASE=.*/DB_DATABASE=database\/database.sqlite/' .env
+
+      # 7. Genera la clave de aplicación única para Laravel.
+      # Es un requisito de seguridad para encriptar datos.
       - name: Generate app key
         run: php artisan key:generate
 
-      # Si tus tests usan DB real, ajusta este paso (puedes usar SQLite in-memory o MySQL service)
-      - name: Run migrations
-        run: php artisan migrate --force
-
-      - name: Run backend tests
-        run: php artisan test
-
-  frontend:
-    name: Frontend (Vite)
-    runs-on: ubuntu-latest
-    needs: backend    # No corre frontend si backend ya falló
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+        # --- NUEVOS PASOS DE FRONTEND EN EL JOB DE BACKEND ---
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: npm # Usa el caché de NPM
 
       - name: Install JS dependencies
         run: npm ci
 
+      - name: Build frontend assets
+        run: npm run build
+      # ----------------------------------------------------
+
+      # 8. Ejecuta las migraciones de la base de datos.
+      # Esto crea la estructura de tablas (posts, users, etc.) en la base de datos SQLite.
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      # 9. Ejecuta la suite de pruebas automatizadas de Laravel (usando PHPUnit o Pest).
+      - name: Run backend tests
+        run: php artisan test
+
+  # Segundo trabajo: se encarga de la parte del frontend (Vite/Node.js).
+  frontend:
+    name: Frontend (Vite)
+    runs-on: ubuntu-latest
+    # 'needs: backend' crea una dependencia. Este trabajo 'frontend' solo se ejecutará
+    # si el trabajo 'backend' ha terminado exitosamente.
+    needs: backend
+
+    # Contiene la secuencia de pasos que se ejecutarán en este trabajo.
+    steps:
+      # 1. Descarga el código del repositorio.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Configura el entorno de Node.js.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          # Especifica la versión de Node.js a utilizar.
+          node-version: 20
+          # Habilita el caché para 'npm'. Esto acelera las futuras ejecuciones
+          # al no tener que descargar las dependencias desde cero cada vez.
+          cache: npm
+
+      # 3. Instala las dependencias de JavaScript.
+      # 'npm ci' es más rápido y seguro para entornos de CI que 'npm install',
+      # ya que instala las versiones exactas del archivo 'package-lock.json'.
+      - name: Install JS dependencies
+        run: npm ci
+
+      # 4. Compila los archivos de frontend para producción.
+      # Este comando ejecuta el script 'build' definido en tu 'package.json'.
       - name: Build frontend
         run: npm run build
