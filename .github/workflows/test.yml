@@ -18,6 +18,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+        # --- PASO DETECTIVE (AGREGA ESTO) ---
+      - name: List files (Debug)
+        run: |
+          echo "La ruta actual es:"
+          pwd
+          echo "Los archivos en esta ruta son:"
+          ls -la
+          echo "Buscando composer.json recursivamente:"
+          find . -name "composer.json"
+      # ------------------------------------
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
