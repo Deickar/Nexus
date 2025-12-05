@@ -53,7 +53,7 @@ jobs:
           coverage: none
           # Instala herramientas adicionales. Aquí se instala Composer v2.
           tools: composer:v2
-
+     
       # 3. (Opcional) Verifica la versión de PHP instalada para confirmar que el paso anterior funcionó.
       - name: Check PHP Version
         run: php -v
@@ -64,7 +64,8 @@ jobs:
         # --no-interaction: No hace preguntas interactivas.
         # --no-progress: Oculta la barra de progreso para un log más limpio.
         run: composer install --prefer-dist --no-interaction --no-progress
-
+      - name: Check PHP Code Style (Linting)
+        run: php vendor/bin/pint --test
       # 5. Copia el archivo de ejemplo de variables de entorno para crear el archivo .env real.
       # Las aplicaciones de Laravel necesitan este archivo para funcionar.
       - name: Copy .env
