@@ -30,7 +30,7 @@ jobs:
 
       # --- PASO DE DEPURACIÓN ---
       # Este paso es útil para diagnosticar problemas. Muestra la ruta actual y lista
-      # todos los archivos, ayudando a confirmar que el checkout y la estructura son correctos.
+      #todos los archivos, ayudando a confirmar que el checkout y la estructura son correctos
       - name: List files (Debug)
         run: |
           echo "La ruta actual es:"
