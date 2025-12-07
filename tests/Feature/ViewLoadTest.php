@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,6 +15,7 @@ class ViewLoadTest extends TestCase
      * @dataProvider vistasPublicas
      */
     // Pruebas de vistas publicas.
+    #[DataProvider('vistasPublicas')]
     public function test_de_carga_vista_correcta($uri): void
     {
         // Ejecuta la peticion GET de la ruta
@@ -43,6 +45,7 @@ class ViewLoadTest extends TestCase
      * @dataProvider vistasAutenticadas
      */
     // Prueba de vista de autenticadas (ACCOUNT)
+    #[DataProvider('vistasAutenticadas')]
     public function test_carga_de_vista_autenticadas_correcta($uri): void
     {
 
@@ -70,6 +73,7 @@ class ViewLoadTest extends TestCase
      * @dataProvider vistasAdmin
      */
     // Pruebas de vistas de administrador (ADMIN)
+    #[DataProvider('vistasAdmin')]
     public function test_carga_de_vista_admin($uri): void
     {
 
