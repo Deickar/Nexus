@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ViewLoadTest extends TestCase
