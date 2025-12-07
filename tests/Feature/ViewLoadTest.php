@@ -63,7 +63,7 @@ class ViewLoadTest extends TestCase
             // Vistas de Account
             'Profile Page' => ['/mi-cuenta/perfil'],
             'Favorite Page' => ['/mi-cuenta/favoritos'],
-            'Orders Page' => ['/mi-cuenta/ordernes'],
+            'Orders Page' => ['/mi-cuenta/ordenes'],
             'Reviews Page' => ['/mi-cuenta/resenas'],
             'Address Page' => ['/mi-cuenta/direccion'],
         ];
