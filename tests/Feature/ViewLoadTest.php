@@ -33,10 +33,10 @@ class ViewLoadTest extends TestCase
             'Resgister Page' => ['/register'],
             // Vistas de nivel superior
             'Home Page' => ['/'],
-            'Contact Page' => ['/contact'],
+            'Contact Page' => ['/contacto'],
             'Offers Page' => ['/offers'],
-            'Categoris Page' => ['/categories'],
-            'Category Detail' => ['/category/slug-ejemplo'], // ajusta la ruta dinamica
+            'Categoris Page' => ['/categorias'],
+            'Category Detail' => ['/categorias/slug-ejemplo'], // ajusta la ruta dinamica
         ];
 
     }
@@ -61,11 +61,11 @@ class ViewLoadTest extends TestCase
     {
         return [
             // Vistas de Account
-            'Profile Page' => ['/account/profile'],
-            'Favorite Page' => ['/account/favorites'],
-            'Orders Page' => ['/account/order'],
-            'Reviews Page' => ['/account/reviews'],
-            'Address Page' => ['/account/address'],
+            'Profile Page' => ['/account/perfil'],
+            'Favorite Page' => ['/account/favoritos'],
+            'Orders Page' => ['/account/ordernes'],
+            'Reviews Page' => ['/account/resenas'],
+            'Address Page' => ['/account/direccion'],
         ];
     }
 
