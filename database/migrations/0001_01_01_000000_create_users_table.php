@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
             // Column de admin
             $table->boolean('is_admin')->default(false);
-            $table->timesstamps();
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
