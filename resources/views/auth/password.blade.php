@@ -23,7 +23,7 @@
                 Ingresa tu correo y te enviaremos un enlace para crear una nueva contraseña.
             </p>
 
-            <form method="POST" action="/forgot-password" class="space-y-3">
+            <form method="POST" action="/password" class="space-y-3">
                 @csrf
                     <label class="block text-[#7072BF] font-semibold mb-2">
                         Correo electrónico *

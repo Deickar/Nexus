@@ -30,16 +30,16 @@
             {{-- MENÚ LATERAL --}}
             <nav class="flex flex-col text-base">
                 <a href="{{ route('account.profile') }}"
-                   class="flex items-center justify-between px-7 py-3.5 font-medium
-                          bg-[#f4f6fb] text-[#2128A6] border-l-4 border-[#2128A6]">
+                   class="flex items-center justify-between px-7 py-3.5 text-gray-600 hover:bg-gray-50">
                     <span>Perfil</span>
-                    <span class="text-xs">&gt;</span>
+                    <span class="text-xs text-gray-400">&gt;</span>
                 </a>
 
                 <a href="{{ route('account.address') }}"
-                   class="flex items-center justify-between px-7 py-3.5 text-gray-600 hover:bg-gray-50">
+                   class="flex items-center justify-between px-7 py-3.5 font-medium
+                          bg-[#f4f6fb] text-[#2128A6] border-l-4 border-[#2128A6]">
                     <span>Dirección</span>
-                    <span class="text-xs text-gray-400">&gt;</span>
+                    <span class="text-xs">&gt;</span>
                 </a>
 
                 <a href="{{ route('account.orders') }}"
@@ -48,7 +48,7 @@
                     <span class="text-xs text-gray-400">&gt;</span>
                 </a>
 
-                <a href="{{ route('account.reviews') }}"
+                 <a href="{{ route('account.reviews') }}"
                    class="flex items-center justify-between px-7 py-3.5 text-gray-600 hover:bg-gray-50">
                     <span>Reseñas</span>
                     <span class="text-xs text-gray-400">&gt;</span>
@@ -62,7 +62,7 @@
             </nav>
         </aside>
 
-        {{-- COLUMNA DERECHA: FORMULARIO DE PERFIL --}}
+        {{-- COLUMNA DERECHA: FORMULARIO DE DIRECCIÓN --}}
         <section class="bg-white rounded-2xl shadow-lg p-8 lg:p-10 md:col-span-2 min-h-[60vh]">
 
             {{-- Mensaje de estado (demo) --}}
@@ -85,104 +85,118 @@
 
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-3xl font-extrabold text-[#2128A6]">Perfil</h1>
+                    <h1 class="text-3xl font-extrabold text-[#2128A6]">Dirección</h1>
                     <p class="text-sm text-gray-500 mt-1">
-                        Revisa y edita tus datos personales.
+                        Gestiona las direcciones donde recibirás tus pedidos.
                     </p>
                 </div>
-                {{-- Botón solo visual, el formulario se guarda con el botón de abajo --}}
                 <button
-                    type="button"
-                    class="px-6 py-2.5 rounded-full border border-[#6F73BF] text-[#6F73BF]
-                           text-sm font-semibold cursor-default">
-                    Editar
+                    type="submit"
+                    form="address-form"
+                    class="px-6 py-2.5 rounded-full bg-[#2128A6] text-white text-sm font-semibold
+                           hover:bg-[#151c7a] transition">
+                    Guardar cambios
                 </button>
             </div>
 
             {{-- FORMULARIO --}}
-            <form action="{{ route('account.profile.update') }}" method="POST" class="space-y-8">
+            <form id="address-form"
+                  action="{{ route('account.address.update') }}"
+                  method="POST"
+                  class="space-y-8">
                 @csrf
 
                 <div class="grid md:grid-cols-2 gap-7">
-                    <div class="space-y-1">
-                        <label for="first_name" class="text-xs text-gray-400 uppercase tracking-wide">
-                            Primer nombre
+                    <div class="space-y-1 md:col-span-2">
+                        <label for="street" class="text-xs text-gray-400 uppercase tracking-wide">
+                            Calle y avenida
                         </label>
                         <input
                             type="text"
-                            id="first_name"
-                            name="first_name"
-                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('first_name', 'Ana') }}"
+                            id="street"
+                            name="street"
+                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800
+                                   outline-none border border-transparent focus:border-[#6F73BF]"
+                            value="{{ old('street', '4a calle') }}"
                         >
                     </div>
 
                     <div class="space-y-1">
-                        <label for="last_name" class="text-xs text-gray-400 uppercase tracking-wide">
-                            Primer apellido
+                        <label for="number" class="text-xs text-gray-400 uppercase tracking-wide">
+                            Número / Casa / Apto
                         </label>
                         <input
                             type="text"
-                            id="last_name"
-                            name="last_name"
-                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('last_name', 'Martínez') }}"
+                            id="number"
+                            name="number"
+                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800
+                                   outline-none border border-transparent focus:border-[#6F73BF]"
+                            value="{{ old('number', '#12-34') }}"
                         >
                     </div>
 
                     <div class="space-y-1">
-                        <label for="birth_date" class="text-xs text-gray-400 uppercase tracking-wide">
-                            Fecha de nacimiento
+                        <label for="city" class="text-xs text-gray-400 uppercase tracking-wide">
+                            Ciudad / Municipio
                         </label>
                         <input
-                            type="date"
-                            id="birth_date"
-                            name="birth_date"
-                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('birth_date', '1990-01-01') }}"
+                            type="text"
+                            id="city"
+                            name="city"
+                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800
+                                   outline-none border border-transparent focus:border-[#6F73BF]"
+                            value="{{ old('city', 'Guatemala') }}"
                         >
                     </div>
 
                     <div class="space-y-1">
-                        <label for="phone" class="text-xs text-gray-400 uppercase tracking-wide">
-                            Número de teléfono
+                        <label for="department" class="text-xs text-gray-400 uppercase tracking-wide">
+                            Departamento
                         </label>
                         <input
                             type="text"
-                            id="phone"
-                            name="phone"
-                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('phone', '+502 0000-0000') }}"
+                            id="department"
+                            name="department"
+                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800
+                                   outline-none border border-transparent focus:border-[#6F73BF]"
+                            value="{{ old('department', 'Guatemala') }}"
+                        >
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="postal_code" class="text-xs text-gray-400 uppercase tracking-wide">
+                            Código postal
+                        </label>
+                        <input
+                            type="text"
+                            id="postal_code"
+                            name="postal_code"
+                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800
+                                   outline-none border border-transparent focus:border-[#6F73BF]"
+                            value="{{ old('postal_code', '01001') }}"
                         >
                     </div>
 
                     <div class="space-y-1 md:col-span-2">
-                        <label for="email" class="text-xs text-gray-400 uppercase tracking-wide">
-                            Correo electrónico
+                        <label for="reference" class="text-xs text-gray-400 uppercase tracking-wide">
+                            Referencias (cómo llegar)
                         </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('email', 'user@correo.com') }}"
-                        >
+                        <textarea
+                            id="reference"
+                            name="reference"
+                            rows="3"
+                            class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800
+                                   outline-none border border-transparent focus:border-[#6F73BF] resize-none"
+                        >{{ old('reference', 'Frente a la tienda azul, portón blanco.') }}</textarea>
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center pt-2">
+                <div class="flex justify-end pt-2">
                     <button
                         type="submit"
                         class="px-7 py-2.5 rounded-full bg-[#2128A6] text-white text-sm font-semibold
                                hover:bg-[#151c7a] transition">
                         Guardar cambios
-                    </button>
-
-                    <button
-                        type="button"
-                        class="px-7 py-2.5 rounded-full border border-red-300 text-red-500 text-sm font-semibold
-                               hover:bg-red-50 transition">
-                        Eliminar cuenta
                     </button>
                 </div>
             </form>

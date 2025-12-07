@@ -60,6 +60,7 @@
                     </a>
                 </div>
 
+                <!--texto-->
                 <button type="submit"
                         class="w-full bg-[#2128A5] hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-lg transition transform hover:scale-105">
                     Iniciar sesión
@@ -82,7 +83,7 @@
 
 
     <!-- SCRIPT DEL OJITO -->
-    <script>
+    <script>  //funcion para el ojito que pueda mostrar u ocultar contrasena en el label
     function togglePassword() {
         const password = document.getElementById('password');
         const icon = document.getElementById('eyeIcon');
