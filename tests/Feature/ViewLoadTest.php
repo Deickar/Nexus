@@ -30,11 +30,11 @@ class ViewLoadTest extends TestCase
         return [
             // Vistas de Auth
             'Login Page' => ['/login'],
-            'Resgister Page' => ['/register'],
+            'Register Page' => ['/register'],
             // Vistas de nivel superior
             'Home Page' => ['/'],
             'Contact Page' => ['/contacto'],
-            'Offers Page' => ['/offers'],
+            'Offers Page' => ['/ofertas'],
             'Categoris Page' => ['/categorias'],
             'Category Detail' => ['/categorias/slug-ejemplo'], // ajusta la ruta dinamica
         ];
@@ -61,11 +61,11 @@ class ViewLoadTest extends TestCase
     {
         return [
             // Vistas de Account
-            'Profile Page' => ['/account/perfil'],
-            'Favorite Page' => ['/account/favoritos'],
-            'Orders Page' => ['/account/ordernes'],
-            'Reviews Page' => ['/account/resenas'],
-            'Address Page' => ['/account/direccion'],
+            'Profile Page' => ['/mi-cuenta/perfil'],
+            'Favorite Page' => ['/mi-cuenta/favoritos'],
+            'Orders Page' => ['/mi-cuenta/ordernes'],
+            'Reviews Page' => ['/mi-cuenta/resenas'],
+            'Address Page' => ['/mi-cuenta/direccion'],
         ];
     }
 
