@@ -65,17 +65,17 @@ class AdminController extends Controller
     public function profile()
     {
         // TODO: Obtener los datos del usuario autenticado
-        $admin = (object)[
+        $admin = (object) [
             'name' => 'Admin Nexus',
-            'email' => 'admin@nexus.com'
+            'email' => 'admin@nexus.com',
         ];
+
         return view('admin.profile', ['admin' => $admin]);
     }
 
     /**
      * Actualiza el perfil del administrador.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateProfile(Request $request)
