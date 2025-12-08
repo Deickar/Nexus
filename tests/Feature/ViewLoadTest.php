@@ -77,7 +77,7 @@ class ViewLoadTest extends TestCase
     #[DataProvider('vistasAdmin')]
     public function test_carga_de_vista_admin($uri): void
     {
-        
+
         http::fake([
             '*/admin/productos' => Http::response('<html><body>Admin Dashboard</body></html>', 200),
         ]);
