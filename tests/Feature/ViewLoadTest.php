@@ -79,13 +79,26 @@ class ViewLoadTest extends TestCase
     {
 
         Http::fake([
-            // Asegúrate de que todas las claves esperadas por la vista sean arrays vacíos []
-            '*' => Http::response([
-                'users' => [], // Si la vista tiene un foreach sobre $users
-                'orders' => [], // Si la vista tiene un foreach sobre $orders
-                'categories' => [], // Y cualquier otra lista que uses
-                'some_single_value' => '0', // O variables individuales
+            // Mock para /admin/productos
+            '*/admin/productos' => Http::response([
+                // La vista espera una colección de productos,
+                // le enviamos un array vacío [] para que el foreach funcione.
+                ['id' => 1, 'name' => 'Mock Product'], // Puedes simular un producto
+                ['id' => 2, 'name' => 'Mock Product 2'],
             ], 200),
+
+            // Mock para /admin/dashboard
+            '*/admin/dashboard' => Http::response([
+                // Aquí simulamos los datos que la vista necesita para sus foreach().
+                // Basado en el error anterior, la vista debe estar iterando sobre algo
+                // que es parte del array dashboardData.
+                'users_count' => 10,
+                'latest_orders' => [], // Si la vista itera sobre órdenes recientes
+                'recent_logins' => [], // Si la vista itera sobre loggings
+            ], 200),
+
+            // Opcional: Un fallback para cualquier otra petición
+            '*' => Http::response('OK', 200),
         ]);
         /** @var User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
