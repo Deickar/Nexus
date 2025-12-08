@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Route;
 
 // --- RUTA PARA EL PANEL DE ADMINISTRADOR ---
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
@@ -21,8 +21,6 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
-
-
 // ruta para olvide mi contraseña (versión simple original)
 Route::get('/password', function () {
     return view('auth.password');
@@ -32,7 +30,6 @@ Route::get('/password', function () {
 Route::get('/register', function () {
     return view('auth.register');
 });
-
 
 // Página de contacto
 Route::get('/contacto', function () {
@@ -46,8 +43,6 @@ Route::get('/mi-cuenta/perfil', [AccountController::class, 'profile'])
 Route::post('/mi-cuenta/perfil', [AccountController::class, 'updateProfile'])
     ->name('account.profile.update');
 
-
-
 // Dirección usuario
 Route::get('/mi-cuenta/direccion', [AccountController::class, 'address'])
     ->name('account.address');
@@ -55,23 +50,21 @@ Route::get('/mi-cuenta/direccion', [AccountController::class, 'address'])
 Route::post('/mi-cuenta/direccion', [AccountController::class, 'updateAddress'])
     ->name('account.address.update');
 
-
 // Órdenes usuario
 Route::get('/mi-cuenta/ordenes', [AccountController::class, 'orders'])
     ->name('account.orders');
 
-//reseñas de usuario
+// reseñas de usuario
 Route::get('/mi-cuenta/resenas', [AccountController::class, 'reviews'])->name('account.reviews');
 
-//Favoritos de usuario
+// Favoritos de usuario
 Route::get('/mi-cuenta/favoritos', [AccountController::class, 'favorites'])
     ->name('account.favorites');
 
-// Ofertas del día 
+// Ofertas del día
 Route::get('/ofertas', function () {
     return view('offers');
 })->name('offers');
-
 
 // --- RUTAS NUEVAS DE TU COMPAÑERO (las conservamos completas) ---
 
@@ -111,7 +104,6 @@ Route::get('/categorias', function () {
     return view('categories');
 })->name('categories');
 
-
 Route::get('/categorias/{slug}', function ($slug) {
 
     // Simulando productos por categoría
@@ -134,9 +126,7 @@ Route::get('/categorias/{slug}', function ($slug) {
 
     return view('category-page', [
         'slug' => $slug,
-        'products' => $products[$slug] ?? []  // Si no existe la categoría → vacío
+        'products' => $products[$slug] ?? [],  // Si no existe la categoría → vacío
     ]);
 
 })->name('category.show');
-
-
