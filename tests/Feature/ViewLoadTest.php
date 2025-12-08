@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -76,7 +77,10 @@ class ViewLoadTest extends TestCase
     #[DataProvider('vistasAdmin')]
     public function test_carga_de_vista_admin($uri): void
     {
-
+        
+        http::fake([
+            '*/admin/productos' => Http::response('<html><body>Admin Dashboard</body></html>', 200),
+        ]);
         /** @var User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
