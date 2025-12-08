@@ -1,19 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    {{--
-    |--------------------------------------------------------------------------
-    | Encabezado de la Página
-    |--------------------------------------------------------------------------
-    |
-    | Saludo personalizado para el administrador.
-    |
-    --}}
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold">Hola, Jos</h1>
-        <p class="text-gray-600">Repasa rápidamente lo que sucede en tu tienda.</p>
-    </div>
+<div class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        {{--
+        |--------------------------------------------------------------------------
+        | Encabezado de la Página
+        |--------------------------------------------------------------------------
+        |
+        | Saludo personalizado para el administrador.
+        |
+        --}}
+        <div class="mb-8 bg-white p-6 rounded-lg shadow-md">
+            <h1 class="text-4xl font-bold text-gray-800">¡Bienvenido, Administrador!</h1>
+            <p class="text-gray-600 mt-2">Aquí tienes un resumen de la actividad de tu tienda.</p>
+        </div>
 
     {{--
     |--------------------------------------------------------------------------
@@ -29,40 +30,40 @@
         <h2 class="text-2xl font-bold mb-4 text-gray-800">Detalles generales</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <!-- Card: Ventas totales -->
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-center transition-transform transform hover:scale-105 hover:shadow-xl">
                 <div class="bg-blue-100 p-3 rounded-full">
                     <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 10v-1m0-6c-1.657 0-3 .895-3 2s1.343 2 3 2m0-4a2 2 0 100-4 2 2 0 000 4z"></path></svg>
                 </div>
                 <div class="ml-4">
                     <p class="text-gray-600 text-sm">Ventas totales</p>
-                    <p class="text-2xl font-bold">Q2,790.49</p>
+                    <p class="text-2xl font-bold">Q{{ number_format($dashboardData['total_sales'] ?? 0, 2) }}</p>
                     <p class="text-green-500 text-xs">↑ 1760.33%</p>
                 </div>
             </div>
             <!-- Card: Órdenes totales -->
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-center transition-transform transform hover:scale-105 hover:shadow-xl">
                 <div class="bg-green-100 p-3 rounded-full">
                     <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                 </div>
                 <div class="ml-4">
                     <p class="text-gray-600 text-sm">Órdenes totales</p>
-                    <p class="text-2xl font-bold">14</p>
+                    <p class="text-2xl font-bold">{{ $dashboardData['total_orders'] ?? 0 }}</p>
                     <p class="text-green-500 text-xs">↑ 180%</p>
                 </div>
             </div>
             <!-- Card: Clientes totales -->
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-center transition-transform transform hover:scale-105 hover:shadow-xl">
                 <div class="bg-yellow-100 p-3 rounded-full">
                     <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 016-6h6a6 6 0 016 6v1h-3"></path></svg>
                 </div>
                 <div class="ml-4">
                     <p class="text-gray-600 text-sm">Clientes totales</p>
-                    <p class="text-2xl font-bold">2</p>
+                    <p class="text-2xl font-bold">{{ $dashboardData['total_clients'] ?? 0 }}</p>
                     <p class="text-green-500 text-xs">↑ 100%</p>
                 </div>
             </div>
             <!-- Card: Promedio de ventas -->
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-center transition-transform transform hover:scale-105 hover:shadow-xl">
                 <div class="bg-purple-100 p-3 rounded-full">
                     <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                 </div>
@@ -73,7 +74,7 @@
                 </div>
             </div>
             <!-- Card: Total de facturas no pagadas -->
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-center transition-transform transform hover:scale-105 hover:shadow-xl">
                 <div class="bg-red-100 p-3 rounded-full">
                     <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
@@ -107,7 +108,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-gray-600 text-sm">Ventas totales</p>
-                        <p class="text-xl font-bold">Q1317.49</p>
+                        <p class="text-xl font-bold">Q{{ number_format($dashboardData['today_sales'] ?? 0, 2) }}</p>
                         <p class="text-green-500 text-xs">↑ 1760.33%</p>
                     </div>
                 </div>
@@ -118,7 +119,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-gray-600 text-sm">Pedidos hoy</p>
-                        <p class="text-xl font-bold">2</p>
+                        <p class="text-xl font-bold">{{ $dashboardData['today_orders'] ?? 0 }}</p>
                         <p class="text-green-500 text-xs">↑ 180%</p>
                     </div>
                 </div>
@@ -129,7 +130,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-gray-600 text-sm">Clientes de hoy</p>
-                        <p class="text-xl font-bold">0</p>
+                        <p class="text-xl font-bold">{{ $dashboardData['today_clients'] ?? 0 }}</p>
                         <p class="text-red-500 text-xs">↓ 100%</p>
                     </div>
                 </div>
@@ -144,51 +145,48 @@
             | las imágenes de los productos comprados.
             |
             --}}
-            <div class="border-t pt-4 mt-4 flex items-start justify-between">
-                {{--
-                |------------------------------------------------------------------
-                | Contenedor Principal de la Transacción
-                |------------------------------------------------------------------
-                |
-                | Se utiliza un layout flexbox que se ajusta (`flex-wrap`) en
-                | pantallas pequeñas y se expande en pantallas medianas y grandes.
-                | El `gap-x-8` y `gap-y-4` proporcionan un espaciado consistente
-                | y responsivo entre los elementos.
-                |
-                --}}
-                <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
-                    {{-- Columna 1: Detalles de la Orden --}}
-                    <div class="flex-shrink-0">
-                        <p class="font-bold text-gray-800">#53</p>
-                        <p class="text-gray-500 text-sm">14 nov 2025, 16:52:36</p>
-                        <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Completado</span>
+            @if(isset($dashboardData['recent_transaction']))
+                @php $transaction = (object)$dashboardData['recent_transaction']; @endphp
+                <div class="border-t pt-4 mt-4 flex items-start justify-between">
+                    <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
+                        {{-- Columna 1: Detalles de la Orden --}}
+                        <div class="flex-shrink-0">
+                            <p class="font-bold text-gray-800">#{{ $transaction->id ?? 'N/A' }}</p>
+                            <p class="text-gray-500 text-sm">{{ \Carbon\Carbon::parse($transaction->date ?? now())->format('d M Y, H:i:s') }}</p>
+                            <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">{{ $transaction->status ?? 'Completado' }}</span>
+                        </div>
+
+                        {{-- Columna 2: Método de Pago --}}
+                        <div class="flex-shrink-0">
+                            <p class="font-semibold text-gray-700">{{ $transaction->payment_method ?? 'N/A' }}</p>
+                            <p class="text-gray-500 text-sm">Predeterminado</p>
+                        </div>
+
+                        {{-- Columna 3: Detalles del Cliente --}}
+                        <div class="flex-shrink-0">
+                            <p class="font-bold text-gray-800">{{ $transaction->client['name'] ?? 'N/A' }}</p>
+                            <p class="text-gray-500 text-sm">{{ $transaction->client['email'] ?? 'N/A' }}</p>
+                            <p class="text-gray-500 text-sm">{{ $transaction->client['city'] ?? 'N/A' }}</p>
+                        </div>
+
+                        {{-- Columna 4: Imágenes de Productos --}}
+                        <div class="flex items-center space-x-2">
+                            @foreach($transaction->products as $product)
+                                <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] }}" class="w-10 h-10 bg-gray-200 rounded-md shadow-sm object-cover">
+                            @endforeach
+                        </div>
                     </div>
 
-                    {{-- Columna 2: Método de Pago --}}
-                    <div class="flex-shrink-0">
-                        <p class="font-semibold text-gray-700">Transferencia de dinero</p>
-                        <p class="text-gray-500 text-sm">Predeterminado</p>
-                    </div>
-
-                    {{-- Columna 3: Detalles del Cliente --}}
-                    <div class="flex-shrink-0">
-                        <p class="font-bold text-gray-800">Jimmy Doe</p>
-                        <p class="text-gray-500 text-sm">john@example.com</p>
-                        <p class="text-gray-500 text-sm">Ciudad de guatemala</p>
-                    </div>
-
-                    {{-- Columna 4: Imágenes de Productos --}}
-                    <div class="flex items-center space-x-2">
-                        <div class="w-10 h-10 bg-gray-200 rounded-md shadow-sm"></div>
-                        <div class="w-10 h-10 bg-gray-200 rounded-md shadow-sm"></div>
+                    {{-- Icono de flecha a la derecha --}}
+                    <div class="self-center">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
                 </div>
-
-                {{-- Icono de flecha a la derecha --}}
-                <div class="self-center">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            @else
+                <div class="text-center py-4 mt-4 border-t">
+                    <p class="text-gray-500">No hay transacciones recientes.</p>
                 </div>
-            </div>
+            @endif
         </div>
 
         <h2 class="text-2xl font-bold mb-4 text-gray-800">Umbral de existencias</h2>
@@ -319,39 +317,24 @@
                 <p class="text-gray-600 text-sm">Cliente</p>
                 <p class="text-gray-600 text-sm">16 oct - 14 nov</p>
             </div>
-            <!-- Cliente 1 -->
-            <div class="flex justify-between items-center py-4 border-b">
-                <div>
-                    <p class="font-bold">Jimmy Doe</p>
-                    <p class="text-gray-600 text-sm">john@example.com</p>
+            @if(isset($dashboardData['top_clients']) && count($dashboardData['top_clients']) > 0)
+                @foreach ($dashboardData['top_clients'] as $client)
+                <div class="flex justify-between items-center py-4 {{ !$loop->last ? 'border-b' : '' }}">
+                    <div>
+                        <p class="font-bold">{{ $client['name'] }}</p>
+                        <p class="text-gray-600 text-sm">{{ $client['email'] }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold">Q{{ number_format($client['total_spent'], 2) }}</p>
+                        <p class="text-gray-600 text-sm">{{ $client['orders_count'] }} ordenes</p>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <p class="font-bold">Q2,790.49</p>
-                    <p class="text-gray-600 text-sm">9 ordenes</p>
+                @endforeach
+            @else
+                <div class="text-center py-4">
+                    <p class="text-gray-500">No hay datos de clientes disponibles.</p>
                 </div>
-            </div>
-            <!-- Cliente 2 -->
-            <div class="flex justify-between items-center py-4 border-b">
-                <div>
-                    <p class="font-bold">Jane Smith</p>
-                    <p class="text-gray-600 text-sm">jane@example.com</p>
-                </div>
-                <div class="text-right">
-                    <p class="font-bold">Q1,950.20</p>
-                    <p class="text-gray-600 text-sm">7 ordenes</p>
-                </div>
-            </div>
-            <!-- Cliente 3 -->
-            <div class="flex justify-between items-center py-4">
-                <div>
-                    <p class="font-bold">Sam Wilson</p>
-                    <p class="text-gray-600 text-sm">sam@example.com</p>
-                </div>
-                <div class="text-right">
-                    <p class="font-bold">Q1,234.56</p>
-                    <p class="text-gray-600 text-sm">5 ordenes</p>
-                </div>
-            </div>
+            @endif
         </div>
     </div>
 </div>

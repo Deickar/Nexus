@@ -25,7 +25,7 @@
 
 <body 
     x-data="cartGlobal()"
-    class="bg-white text-gray-900 flex flex-col min-h-screen"
+    class="bg-[#f4f6fb] text-gray-900 flex flex-col min-h-screen"
 >
 
     {{-- NAVBAR RESPONSIVO --}}
@@ -82,18 +82,24 @@
                     </svg>
                 </a>
 
-                {{-- ICONO CARRITO --}}
-                <button 
-                    x-data
-                    @click="window.dispatchEvent(new CustomEvent('toggle-cart'))"
-                    type="button"
-                    class="relative text-blue-900 hover:text-blue-700 transition"
-                >
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                            d="M7 18a2 2 0 1 0 2 2a2 2 0 0 0-2-2Zm10 0a2 2 0 1 0 2 2a2 2 0 0 0-2-2Zm-1-12l-.35-1.4A1 1 0 0 0 4.88 4H3a1 1 0 0 0 0 2h1.17l2.1 8.39A1 1 0 0 0 7.24 15h9.52a1 1 0 0 0 1-.76l1.24-5A1 1 0 0 0 18 8H7.42Z" />
-                    </svg>
-                </button>
+               {{-- ICONO CARRITO --}}
+        <button 
+                x-data
+                @click="window.dispatchEvent(new CustomEvent('toggle-cart'))"
+                type="button"
+                class="relative text-blue-900 hover:text-blue-700 transition"
+>
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                 viewBox="0 0 24 24" 
+                class="w-5 h-5 sm:w-6 sm:h-6">
+                <!-- Cesta del carrito -->
+                <path fill="currentColor"
+              d="M5 5h1.4a1 1 0 0 1 .97.76L8.3 8H19a1 1 0 0 1 .98 1.2l-1 5A1 1 0 0 1 18 15H9a1 1 0 0 1-.97-.76L6.1 7H5a1 1 0 0 1 0-2Z" />
+                <!-- Ruedas -->
+                <circle cx="10" cy="18" r="1.6" fill="currentColor" />
+                <circle cx="17" cy="18" r="1.6" fill="currentColor" />
+            </svg>
+        </button>
 
                 {{-- BOTÓN HAMBURGER (SOLO MÓVIL) --}}
                 <button 

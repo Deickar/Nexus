@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -10,51 +11,26 @@ class AdminController extends Controller
      * Muestra el panel de administración.
      *
      * Este método es el responsable de renderizar la vista principal del panel de administración.
-     * En el futuro, se encargará de recopilar todos los datos necesarios de la base de datos
-     * y pasarlos a la vista para su correcta visualización.
+     * Ahora, en lugar de usar datos simulados, se conecta a la API para obtener los productos
+     * y los pasa a la vista para su correcta visualización.
      *
      * @return \Illuminate\View\View
      */
     public function index()
     {
-        // --- Simulación de Datos de Productos ---
-        // Este array simula los datos que normalmente vendrían de la base de datos.
-        // Se utiliza para rellenar las secciones "Umbral de existencias" y "Productos más vendidos".
-        // Las rutas de las imágenes son relativas al directorio `public`.
-        $products = [
-            [
-                'image' => 'img/audifonos.jpg',
-                'name' => 'Auriculares Inalámbricos',
-                'description' => 'Auriculares con cancelación de ruido y alta fidelidad de sonido.',
-                'price' => 79.99,
-                'stock' => 15,
-            ],
-            [
-                'image' => 'img/lenovolaptop.jpg',
-                'name' => 'Laptop Lenovo',
-                'description' => 'Portátil ultraligero con procesador de última generación y 16GB de RAM.',
-                'price' => 899.99,
-                'stock' => 8,
-            ],
-            [
-                'image' => 'img/perfumehugoboss.jpg',
-                'name' => 'Perfume Hugo Boss',
-                'description' => 'Fragancia masculina con notas amaderadas y frescas, ideal para toda ocasión.',
-                'price' => 59.50,
-                'stock' => 3,
-            ],
-            [
-                'image' => 'img/zapatozara.jpg',
-                'name' => 'Zapatos de Cuero Zara',
-                'description' => 'Zapatos de vestir elegantes, fabricados con cuero de alta calidad.',
-                'price' => 120.00,
-                'stock' => 25,
-            ],
-        ];
+        // --- Obtener Datos de Productos desde la API ---
+        $productsResponse = Http::get('http://127.0.0.1:8000/admin/productos');
+        $products = $productsResponse->successful() ? $productsResponse->json() : [];
 
-        // Se pasan los datos de los productos a la vista.
-        // La vista `admin.index` recibirá una variable `$products` que podrá utilizar.
-        return view('admin.index', ['products' => $products]);
+        // --- Obtener Datos del Dashboard desde la API ---
+        $dashboardResponse = Http::get('http://127.0.0.1:8000/admin/dashboard');
+        $dashboardData = $dashboardResponse->successful() ? $dashboardResponse->json() : [];
+
+        // Se pasan todos los datos a la vista.
+        return view('admin.index', [
+            'products' => $products,
+            'dashboardData' => $dashboardData
+        ]);
     }
 
     /**
@@ -65,17 +41,17 @@ class AdminController extends Controller
     public function profile()
     {
         // TODO: Obtener los datos del usuario autenticado
-        $admin = (object) [
+        $admin = (object)[
             'name' => 'Admin Nexus',
-            'email' => 'admin@nexus.com',
+            'email' => 'admin@nexus.com'
         ];
-
         return view('admin.profile', ['admin' => $admin]);
     }
 
     /**
      * Actualiza el perfil del administrador.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateProfile(Request $request)
