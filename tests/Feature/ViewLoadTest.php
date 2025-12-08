@@ -77,7 +77,7 @@ class ViewLoadTest extends TestCase
     #[DataProvider('vistasAdmin')]
     public function test_carga_de_vista_admin($uri): void
     {
-
+        
         Http::fake([
             // Mock para /admin/productos (AÑADIMOS LA CLAVE 'image')
             '*/admin/productos' => Http::response([
@@ -102,7 +102,7 @@ class ViewLoadTest extends TestCase
                 'latest_orders' => [], // Si la vista itera sobre órdenes recientes
                 'recent_logins' => [], // Si la vista itera sobre loggings
             ], 200),
-
+            
             // Opcional: Un fallback
             '*' => Http::response('OK', 200),
         ]);
