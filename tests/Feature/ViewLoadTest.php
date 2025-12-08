@@ -23,7 +23,6 @@ class ViewLoadTest extends TestCase
         $this->get($uri)
            // Afirma que el codigo estatus 200 que signifca OK
             ->assertStatus(200);
-
     }
 
     public static function vistasPublicas(): array
@@ -39,7 +38,6 @@ class ViewLoadTest extends TestCase
             'Categoris Page' => ['/categorias'],
             'Category Detail' => ['/categorias/slug-ejemplo'], // ajusta la ruta dinamica
         ];
-
     }
 
     /**
@@ -49,7 +47,6 @@ class ViewLoadTest extends TestCase
     #[DataProvider('vistasAutenticadas')]
     public function test_carga_de_vista_autenticadas_correcta($uri): void
     {
-
         /** @var User $user */
         $user = User::factory()->create();
 
@@ -101,7 +98,7 @@ class ViewLoadTest extends TestCase
                 'latest_orders' => [], // Si la vista itera sobre órdenes recientes
                 'recent_logins' => [], // Si la vista itera sobre loggings
             ], 200),
-            
+
             // Opcional: Un fallback
             '*' => Http::response('OK', 200),
         ]);
