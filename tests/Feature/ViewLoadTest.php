@@ -79,7 +79,7 @@ class ViewLoadTest extends TestCase
     {
 
         http::fake([
-            '*/admin/productos' => Http::response('<html><body>Admin Dashboard</body></html>', 200),
+            '*' => Http::response('OK', 200),
         ]);
         /** @var User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
