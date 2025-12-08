@@ -77,7 +77,6 @@ class ViewLoadTest extends TestCase
     #[DataProvider('vistasAdmin')]
     public function test_carga_de_vista_admin($uri): void
     {
-        
         Http::fake([
             // Mock para /admin/productos (AÑADIMOS LA CLAVE 'image')
             '*/admin/productos' => Http::response([
