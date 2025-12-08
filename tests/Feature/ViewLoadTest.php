@@ -21,7 +21,7 @@ class ViewLoadTest extends TestCase
     {
         // Ejecuta la peticion GET de la ruta
         $this->get($uri)
-           // Afirma que el codigo estatus 200 que signifca OK
+            // Afirma que el codigo estatus 200 que signifca OK
             ->assertStatus(200);
     }
 
@@ -74,7 +74,7 @@ class ViewLoadTest extends TestCase
     #[DataProvider('vistasAdmin')]
     public function test_carga_de_vista_admin($uri): void
     {
-       Http::fake([
+        Http::fake([
             // Mock para /admin/productos (AÑADIMOS LA CLAVE 'description')
             '*/admin/productos' => Http::response([
                 [
@@ -100,7 +100,7 @@ class ViewLoadTest extends TestCase
                 'latest_orders' => [],
                 'recent_logins' => [],
             ], 200),
-            
+
             '*' => Http::response('OK', 200),
         ]);
         /** @var User $admin */
