@@ -79,25 +79,31 @@ class ViewLoadTest extends TestCase
     {
 
         Http::fake([
-            // Mock para /admin/productos
+            // Mock para /admin/productos (AÑADIMOS LA CLAVE 'image')
             '*/admin/productos' => Http::response([
-                // La vista espera una colección de productos,
-                // le enviamos un array vacío [] para que el foreach funcione.
-                ['id' => 1, 'name' => 'Mock Product'], // Puedes simular un producto
-                ['id' => 2, 'name' => 'Mock Product 2'],
+                [
+                    'id' => 1,
+                    'name' => 'Mock Product 1',
+                    'image' => '/img/mock-product-1.jpg', // 👈 ¡CLAVE AÑADIDA!
+                    'price' => 10.99,
+                    // Añade aquí cualquier otra clave que uses en el foreach de la vista (ej. 'stock', 'description', etc.)
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'Mock Product 2',
+                    'image' => '/img/mock-product-2.jpg', // 👈 ¡CLAVE AÑADIDA!
+                    'price' => 20.99,
+                ],
             ], 200),
 
-            // Mock para /admin/dashboard
+            // Mock para /admin/dashboard (Mantenemos arrays vacíos si son iterados)
             '*/admin/dashboard' => Http::response([
-                // Aquí simulamos los datos que la vista necesita para sus foreach().
-                // Basado en el error anterior, la vista debe estar iterando sobre algo
-                // que es parte del array dashboardData.
                 'users_count' => 10,
                 'latest_orders' => [], // Si la vista itera sobre órdenes recientes
                 'recent_logins' => [], // Si la vista itera sobre loggings
             ], 200),
 
-            // Opcional: Un fallback para cualquier otra petición
+            // Opcional: Un fallback
             '*' => Http::response('OK', 200),
         ]);
         /** @var User $admin */
