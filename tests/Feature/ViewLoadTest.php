@@ -74,32 +74,33 @@ class ViewLoadTest extends TestCase
     #[DataProvider('vistasAdmin')]
     public function test_carga_de_vista_admin($uri): void
     {
-        Http::fake([
-            // Mock para /admin/productos (AÑADIMOS LA CLAVE 'image')
+       Http::fake([
+            // Mock para /admin/productos (AÑADIMOS LA CLAVE 'description')
             '*/admin/productos' => Http::response([
                 [
                     'id' => 1,
                     'name' => 'Mock Product 1',
-                    'image' => '/img/mock-product-1.jpg', // 👈 ¡CLAVE AÑADIDA!
+                    'image' => '/img/mock-product-1.jpg',
                     'price' => 10.99,
-                    // Añade aquí cualquier otra clave que uses en el foreach de la vista (ej. 'stock', 'description', etc.)
+                    'description' => 'A short description for testing.', //  ¡NUEVA CLAVE AÑADIDA!
+                    // Si la vista usa más campos (ej. 'stock', 'slug', 'category_name'), ¡añádelos aquí!
                 ],
                 [
                     'id' => 2,
                     'name' => 'Mock Product 2',
-                    'image' => '/img/mock-product-2.jpg', // 👈 ¡CLAVE AÑADIDA!
+                    'image' => '/img/mock-product-2.jpg',
                     'price' => 20.99,
+                    'description' => 'Another description for testing.', //  ¡NUEVA CLAVE AÑADIDA!
                 ],
             ], 200),
 
-            // Mock para /admin/dashboard (Mantenemos arrays vacíos si son iterados)
+            // Mock para /admin/dashboard (Se mantiene igual)
             '*/admin/dashboard' => Http::response([
                 'users_count' => 10,
-                'latest_orders' => [], // Si la vista itera sobre órdenes recientes
-                'recent_logins' => [], // Si la vista itera sobre loggings
+                'latest_orders' => [],
+                'recent_logins' => [],
             ], 200),
-
-            // Opcional: Un fallback
+            
             '*' => Http::response('OK', 200),
         ]);
         /** @var User $admin */
