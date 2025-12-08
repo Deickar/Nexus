@@ -78,8 +78,14 @@ class ViewLoadTest extends TestCase
     public function test_carga_de_vista_admin($uri): void
     {
 
-        http::fake([
-            '*' => Http::response('OK', 200),
+        Http::fake([
+            // Asegúrate de que todas las claves esperadas por la vista sean arrays vacíos []
+            '*' => Http::response([
+                'users' => [], // Si la vista tiene un foreach sobre $users
+                'orders' => [], // Si la vista tiene un foreach sobre $orders
+                'categories' => [], // Y cualquier otra lista que uses
+                'some_single_value' => '0', // O variables individuales
+            ], 200),
         ]);
         /** @var User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
