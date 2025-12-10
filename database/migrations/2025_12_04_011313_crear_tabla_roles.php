@@ -1,4 +1,5 @@
 <?php
+// database/migrations/2025_12_04_011313_crear_tabla_roles.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,23 +12,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Crear tabla roles
         Schema::create('roles', function (Blueprint $table) {
-            // Clave primaria
-            $table->integer('id_rol')->autoIncrement()->primary();
+            
+            // 🥇 Opción 1 (Recomendada): Usar el nombre de columna por defecto 'id'
+            // $table->id(); 
+            
+            // 🥈 Opción 2 (Si necesitas el nombre 'id_rol'): Usar el nombre personalizado
+            $table->id('id_rol'); // ¡SOLO ESTA LÍNEA DEBE ESTAR!
 
-            // Campos de datos
-            $table->string('nombre_rol', 100)->nullable(false);
-            $table->string('descripcion', 255)->nullable();
+            $table->string('nombre_rol')->unique();
+            $table->string('descripcion')->nullable();
+            
+            // Asegúrate de que no hay líneas como:
+            // $table->primary('id_rol'); 
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        // Eliminar tabla roles
-        Schema::dropIfExists('roles');
-    }
+    // ... (función down)
 };
