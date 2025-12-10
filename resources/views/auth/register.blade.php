@@ -148,8 +148,7 @@
         }
     }
 
-    const REGISTER_API_URL = "{{ url('api/register') }}";
-
+const REGISTER_API_URL = "{{ route('api.register') }}";
     const registerForm        = document.getElementById('registerForm');
     const registerButton      = document.getElementById('registerButton');
     const errorNombreCompleto = document.getElementById('errorNombreCompleto');

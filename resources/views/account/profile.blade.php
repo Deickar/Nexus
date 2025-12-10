@@ -5,6 +5,15 @@
 @section('content')
 <div class="bg-[#f4f6fb] min-h-screen py-12">
 
+    @php
+        // Valores que vienen del controlador (+ old() por si falla la validación)
+        $firstName  = old('first_name', $firstName ?? '');
+        $lastName   = old('last_name', $lastName ?? '');
+        $email      = old('email', $user->correo_electronico ?? '');
+        $phone      = old('phone', $user->telefono ?? '');
+        $avatarChar = mb_substr($user->nombre_completo ?? 'U', 0, 1);
+    @endphp
+
     <div class="max-w-6xl mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
 
         {{-- COLUMNA IZQUIERDA: MENÚ MI CUENTA --}}
@@ -12,11 +21,15 @@
             {{-- CABECERA USUARIO --}}
             <div class="flex items-center gap-4 px-7 py-6 border-b border-gray-100">
                 <div class="w-14 h-14 rounded-full bg-[#6F73BF]/10 flex items-center justify-center text-[#2128A6] text-2xl font-semibold">
-                    A
+                    {{ $avatarChar }}
                 </div>
                 <div>
-                    <p class="font-semibold text-gray-900 text-sm">User Demo</p>
-                    <p class="text-xs text-gray-500">user@correo.com</p>
+                    <p class="font-semibold text-gray-900 text-sm">
+                        {{ $user->nombre_completo ?? 'Usuario' }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        {{ $user->correo_electronico ?? 'correo@ejemplo.com' }}
+                    </p>
                 </div>
             </div>
 
@@ -65,7 +78,7 @@
         {{-- COLUMNA DERECHA: FORMULARIO DE PERFIL --}}
         <section class="bg-white rounded-2xl shadow-lg p-8 lg:p-10 md:col-span-2 min-h-[60vh]">
 
-            {{-- Mensaje de estado (demo) --}}
+            {{-- Mensaje de estado --}}
             @if (session('status'))
                 <div class="mb-4 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3">
                     {{ session('status') }}
@@ -90,7 +103,6 @@
                         Revisa y edita tus datos personales.
                     </p>
                 </div>
-                {{-- Botón solo visual, el formulario se guarda con el botón de abajo --}}
                 <button
                     type="button"
                     class="px-6 py-2.5 rounded-full border border-[#6F73BF] text-[#6F73BF]
@@ -113,7 +125,7 @@
                             id="first_name"
                             name="first_name"
                             class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('first_name', 'Ana') }}"
+                            value="{{ $firstName }}"
                         >
                     </div>
 
@@ -126,7 +138,7 @@
                             id="last_name"
                             name="last_name"
                             class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('last_name', 'Martínez') }}"
+                            value="{{ $lastName }}"
                         >
                     </div>
 
@@ -139,7 +151,7 @@
                             id="birth_date"
                             name="birth_date"
                             class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('birth_date', '1990-01-01') }}"
+                            value="{{ old('birth_date') }}"
                         >
                     </div>
 
@@ -152,7 +164,7 @@
                             id="phone"
                             name="phone"
                             class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('phone', '+502 0000-0000') }}"
+                            value="{{ $phone }}"
                         >
                     </div>
 
@@ -165,7 +177,7 @@
                             id="email"
                             name="email"
                             class="w-full bg-[#f4f6fb] rounded-lg px-4 py-3 text-sm text-gray-800 outline-none border border-transparent focus:border-[#6F73BF]"
-                            value="{{ old('email', 'user@correo.com') }}"
+                            value="{{ $email }}"
                         >
                     </div>
                 </div>

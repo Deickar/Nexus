@@ -2,141 +2,114 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
+
+    /**
+     * PERFIL
+     */
     public function profile()
     {
-        // Aquí se cargarán datos reales del usuario
-        return view('account.profile');
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión');
+        }
+
+        // Separar nombre en nombre y apellido(s) a partir de nombre_completo
+        $nameParts = preg_split('/\s+/', $user->nombre_completo ?? '');
+        $firstName = $nameParts[0] ?? '';
+        $lastName  = implode(' ', array_slice($nameParts, 1));
+
+        return view('account.profile', compact('user', 'firstName', 'lastName'));
     }
 
+    /**
+     * ACTUALIZAR PERFIL
+     */
     public function updateProfile(Request $request)
     {
-        // Aquí se validará y guardará en la BD.
-        // Por ahora solo valida y muestra un mesnaje.
+        $user = Auth::user();
 
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión');
+        }
+
+        // Validación basada en tu tabla `usuarios`
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'birth_date' => 'required|date',
-            'phone' => 'required|string|max:20',
-            'email' => 'required|email',
+            'first_name' => 'required|string|max:100',
+            'last_name'  => 'nullable|string|max:100',
+            'phone'      => 'nullable|string|max:30',
+            'email'      => 'required|email|max:150|unique:usuarios,correo_electronico,' . $user->id_usuario . ',id_usuario',
+            // 'birth_date' => 'nullable|date', // no existe campo en BD, por eso NO lo guardamos
         ]);
 
-        // Aquí:
-        // auth()->user()->update([...]);
+        // Guardar en la BD
+        $user->nombre_completo    = trim($request->first_name . ' ' . $request->last_name);
+        $user->telefono           = $request->phone;
+        $user->correo_electronico = $request->email;
+        // Si algún día agregas fecha_nacimiento en la tabla, aquí se guardaría:
+        // $user->fecha_nacimiento   = $request->birth_date;
 
-        return back()->with('status', 'Perfil actualizado (modo demo, sin guardar en BD).');
+        $user->save();
+
+        return back()->with('status', 'Perfil actualizado correctamente.');
     }
 
+    /**
+     * DIRECCIÓN
+     */
     public function address()
     {
-        // Aquí se cargará la dirección real del usuario
         return view('account.address');
     }
 
-    public function updateAddress(Request $request)
-    {
-        $request->validate([
-            'street' => 'required|string|max:255',
-            'number' => 'nullable|string|max:50',
-            'city' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'postal_code' => 'nullable|string|max:20',
-            'reference' => 'nullable|string|max:500',
-        ]);
-
-        // Aquí se coloca: auth()->user()->address()->updateOrCreate([...])
-
-        return back()->with('status', 'Dirección actualizada (modo demo, sin guardar en BD).');
-    }
-
+    /**
+     * ÓRDENES
+     */
     public function orders()
     {
-        // Datos de ejemplo
-        $orders = [
-            [
-                'code' => 'NX-10234',
-                'date' => '24/10/2025',
-                'status' => 'Completada',
-                'total' => 'Q 950.00',
-            ],
-            [
-                'code' => 'NX-10235',
-                'date' => '10/11/2025',
-                'status' => 'En proceso',
-                'total' => 'Q 1,800.00',
-            ],
-            [
-                'code' => 'NX-10236',
-                'date' => '15/11/2025',
-                'status' => 'Cancelada',
-                'total' => 'Q 420.00',
-            ],
-        ];
-
-        return view('account.orders', compact('orders'));
+        return view('account.orders');
     }
 
-    public function reviews()
-    {
-        // Datos de ejemplo de reseñas
-        $reviews = [
-            [
-                'product' => 'Tab K10 Lenovo',
-                'date' => '24/10/2025',
-                'rating' => 5,
-                'comment' => 'Excelente tablet, rápida y con pantalla muy nítida.',
-                'status' => 'Publicado',
-            ],
-            [
-                'product' => 'Audífonos JBL Tune 760NC',
-                'date' => '10/11/2025',
-                'rating' => 4,
-                'comment' => 'Muy buen sonido y batería, un poco grandes para mi gusto.',
-                'status' => 'Publicado',
-            ],
-            [
-                'product' => 'Bailarina efecto terciopelo',
-                'date' => '15/11/2025',
-                'rating' => 3,
-                'comment' => 'Bonitas, pero la talla viene un poco reducida.',
-                'status' => 'Pendiente',
-            ],
-        ];
-
-        return view('account.reviews', compact('reviews'));
-    }
-
+    /**
+     * FAVORITOS
+     */
     public function favorites()
     {
-        // Datos dde ejemplo para los favoritos
-        $favorites = [
-            [
-                'name' => 'Tab K10 Lenovo',
-                'category' => 'Tecnología',
-                'price' => 'Q 1,800.00',
-                'image' => '/img/tabk10.jpg',
-                'added_at' => '20/11/2025',
-            ],
-            [
-                'name' => 'Audífonos JBL Tune 760NC',
-                'category' => 'Audio',
-                'price' => 'Q 950.00',
-                'image' => '/img/audifonos.jpg',
-                'added_at' => '05/11/2025',
-            ],
-            [
-                'name' => 'Boss Bottled 100ml',
-                'category' => 'Perfumes',
-                'price' => 'Q 1,500.00',
-                'image' => '/img/perfumehugoboss.jpg',
-                'added_at' => '12/11/2025',
-            ],
-        ];
+        return view('account.favorites');
+    }
 
-        return view('account.favorites', compact('favorites'));
+    /**
+     * RESEÑAS DEL USUARIO
+     */
+    public function reviews()
+    {
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return redirect()->route('login');
+        }
+
+        $reviews = Review::with('producto')
+            ->byUser($userId)
+            ->orderByDesc('review_date')
+            ->get()
+            ->map(function ($review) {
+                return [
+                    'id'      => $review->review_id,
+                    'product' => $review->producto->nombre_producto ?? 'Producto no disponible',
+                    'date'    => optional($review->review_date)->format('d/m/Y'),
+                    'rating'  => $review->rating,
+                    'comment' => $review->comment ?: 'Sin comentario',
+                    'status'  => $review->status == Review::STATUS_APPROVED ? 'Publicado' : 'Pendiente',
+                ];
+            });
+
+        return view('account.reviews', compact('reviews'));
     }
 }

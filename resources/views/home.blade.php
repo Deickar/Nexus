@@ -3,6 +3,48 @@
 @section('content')
 <div class="bg-[#f4f6fb]">
 
+    {{-- PERFIL RESUMIDO AL ESTAR LOGUEADO --}}
+    @auth
+        <section class="bg-[#f4f6fb] py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8">
+                <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Bienvenido(a)</p>
+                        <h2 class="text-2xl font-extrabold text-[#2128A6] leading-tight">
+                            {{ auth()->user()->nombre_completo ?? auth()->user()->name ?? 'Tu perfil' }}
+                        </h2>
+                        <p class="text-sm text-gray-500 mt-1">
+                            {{ auth()->user()->correo_electronico ?? auth()->user()->email ?? '' }}
+                        </p>
+                    </div>
+
+                    <div class="mt-4 md:mt-0 flex gap-3">
+                        <a href="{{ route('account.profile') }}"
+                           class="inline-flex items-center justify-center
+                                  bg-[#2128A6] hover:bg-[#6F73BF]
+                                  text-white text-sm font-semibold
+                                  px-5 py-2 rounded-full shadow-md transition">
+                            Ver perfil completo
+                        </a>
+
+                        <a href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                           class="inline-flex items-center justify-center
+                                  bg-gray-200 hover:bg-gray-300
+                                  text-gray-700 text-sm font-semibold
+                                  px-5 py-2 rounded-full transition">
+                            Cerrar sesión
+                        </a>
+                    </div>
+                </div>
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                    @csrf
+                </form>
+            </div>
+        </section>
+    @endauth
+
     {{-- HERO PRINCIPAL --}}
     <section class="relative w-full bg-cover bg-center"
              style="background-image: url('/img/fondo-nexus.jpg');">
@@ -24,7 +66,7 @@
 
                 <div class="flex flex-col justify-center max-w-md">
                     <a href="{{ route('categories') }}"
-                       class="mt-6 inline-flex items-center justify-center 
+                       class="mt-6 inline-flex items-center justify-center
                               bg-[#30D9C8] hover:bg-[#77D9CF]
                               text-white text-2xl font-semibold
                               px-6 py-2 rounded-full shadow-lg transition">
@@ -58,9 +100,13 @@
                 Productos nuevos
             </h3>
 
+            @php
+                $productosNuevos = $productosNuevos ?? collect();
+            @endphp
+
             <div class="relative">
 
-                <!-- Flecha izquierda -->
+                {{-- Flecha izquierda --}}
                 <button id="btnLeft"
                     class="hidden md:flex items-center justify-center absolute -left-4 top-1/2 -translate-y-1/2
                            bg-white shadow-md rounded-full p-3 z-10 hover:bg-gray-100">
@@ -71,172 +117,67 @@
                     </svg>
                 </button>
 
-                <!-- Carrusel -->
+                {{-- Carrusel --}}
                 <div id="carouselProducts"
                      class="flex gap-8 pb-3
                             overflow-x-auto md:overflow-hidden
-                            scroll-smooth snap-x snap-mandatory">
+                            scroll-smooth">
 
-                    {{-- CARD 1 --}}
-                    {{-- conecta con el script a través del id para agregar al carrito --}}
-                    <article     
-                        x-data="{
-                            product: {
-                                id: 1,
-                                name: 'Tab K10 Lenovo',
-                                price: 1800,
-                                image: 'img/tabk10.jpg'
-                            }
-                        }"
-                        class="min-w-[260px] bg-white rounded-2xl shadow-md hover:shadow-xl transition p-5 flex flex-col justify-between snap-start">
+                    @forelse ($productosNuevos as $producto)
+                        @php
+                            $id_imagen  = $producto->id_imagen;
+                            $idProducto = $producto->id_producto;
+                            $nombre     = $producto->nombre_producto;
+                            $descripcion = $producto->descripcion ?? 'Sin descripción';
+                            $precio      = (float) $producto->precio;
 
-                        <!-- contenedor de imagen y descripcion -->
-                        <div>
-                            <img src="img/tabk10.jpg" class="rounded-xl mb-4 w-full object-cover" alt="Tablet">
-                            <h4 class="font-semibold text-[#6F73BF] ">Tab K10 Lenovo</h4>
-                            <p class="text-sm text-black mt-1">
-                                El tamaño de la pantalla de 10.3 pulgadas y la resolución de 1920 x 1200 permiten imágenes fluidas, lectura de contenido fácil.
-                            </p>
-                        </div>
+                            $imagen = '/img/placeholder.png';
 
-                        <div class="mt-4">
-                            <p class="font-bold text-[#2128a6]">Q 1800.00</p>
+                            $productPayload = [
+                                'product' => [
+                                    'id_producto' => $idProducto,
+                                    'name'        => $nombre,
+                                    'price'       => $precio,
+                                    'image'       => $id_imagen,
+                                ],
+                            ];
+                        @endphp
 
-                            <!-- en la función agrega el producto al carrito -->
-                            <button 
-                                @click="window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }))"
-                                class="mt-3 w-full bg-[#6F73BF] hover:bg-[#2128a6] text-white text-sm font-semibold py-2.5 rounded-lg">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </article>
+                        <article
+                            x-data='@json($productPayload)'
+                            class="min-w-[260px] bg-white rounded-2xl shadow-md hover:shadow-xl transition p-5 flex flex-col justify-between snap-start"
+                            data-product-id="{{ $idProducto }}">
 
-                    <!-- CARD 2 -->
-                    <article 
-                        x-data="{
-                            product: {
-                                id: 2,
-                                name: 'Audifonos JBL Tune 760NC',
-                                price: 950,
-                                image: '/img/audifonos.jpg'
-                            }
-                        }"
-                        class="min-w-[260px] bg-white rounded-2xl shadow-md hover:shadow-xl transition p-5 flex flex-col justify-between snap-start">
+                            {{-- contenedor de imagen y descripcion --}}
+                            <div>
+                                <img :src="product.image" class="rounded-xl mb-4 w-full object-cover" alt="{{ $nombre }}" style="min-height: 200px;">
+                                <h4 class="font-semibold text-[#6F73BF] ">{{ $nombre }}</h4>
+                                <p class="text-sm text-black mt-1">
+                                    {{ \Illuminate\Support\Str::limit($descripcion, 120) }}
+                                </p>
+                            </div>
 
-                        <div>
-                            <img src="/img/audifonos.jpg" class="rounded-xl mb-4 w-full object-cover" alt="Audifonos">
-                            <h4 class="font-semibold text-[#6F73BF] ">Audífonos JBL Tune 760NC</h4>
-                            <p class="text-sm text-black mt-1">
-                                Hasta 70 horas de reproducción total. Carga rápida de 5 minutos para 3 horas.
-                            </p>
-                        </div>
+                            <div class="mt-4">
+                                <p class="font-bold text-[#2128a6]">
+                                    Q {{ number_format($precio, 2) }}
+                                </p>
 
-                        <div class="mt-4">
-                            <p class="font-bold text-[#2128a6]">Q 950.00</p>
+                                <button
+                                    @click="window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }))"
+                                    class="mt-3 w-full bg-[#6F73BF] hover:bg-[#2128a6] text-white text-sm font-semibold py-2.5 rounded-lg">
+                                    Añadir al carrito
+                                </button>
+                            </div>
+                        </article>
+                    @empty
+                        <p class="text-gray-500 text-sm">
+                            No hay productos nuevos disponibles por el momento.
+                        </p>
+                    @endforelse
 
-                            <button 
-                                @click="window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }))"
-                                class="mt-3 w-full bg-[#6F73BF] hover:bg-[#2128a6] text-white text-sm font-semibold py-2.5 rounded-lg">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </article>
-
-                    <!-- CARD 3 -->
-                    <article 
-                        x-data="{
-                            product: {
-                                id: 3,
-                                name: 'Laptop Lenovo IdeaPad Slim 3',
-                                price: 5000,
-                                image: '/img/lenovolaptop.jpg'
-                            }
-                        }"
-                        class="min-w-[260px] bg-white rounded-2xl shadow-md hover:shadow-xl transition p-5 flex flex-col justify-between snap-start">
-
-                        <div>
-                            <img src="/img/lenovolaptop.jpg" class="rounded-xl mb-4 w-full object-cover" alt="Laptop Lenovo">
-                            <h4 class="font-semibold text-[#6F73BF] ">Laptop Lenovo IdeaPad Slim 3</h4>
-                            <p class="text-sm text-black mt-1">
-                                Disfruta multimedia en una pantalla nítida con Dolby Audio™.
-                            </p>
-                        </div>
-                
-                        <div class="mt-4">
-                            <p class="font-bold text-[#2128a6]">Q 5,000.00</p>
-
-                            <button 
-                                @click="window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }))"
-                                class="mt-3 w-full bg-[#6F73BF] hover:bg-[#2128a6] text-white text-sm font-semibold py-2.5 rounded-lg">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </article>
-                    
-                    <!-- CARD 4 -->
-                    <article 
-                        x-data="{
-                            product: {
-                                id: 4,
-                                name: 'Boss Bottled 100ml',
-                                price: 1500,
-                                image: '/img/perfumehugoboss.jpg'
-                            }
-                        }"
-                        class="min-w-[260px] bg-white rounded-2xl shadow-md hover:shadow-xl transition p-5 flex flex-col justify-between snap-start">
-                    
-                        <div>
-                            <img src="/img/perfumehugoboss.jpg" class="rounded-xl mb-4 w-full object-cover" alt="Perfume Hugo Boss">
-                            <h4 class="font-semibold text-[#6F73BF] ">Boss Bottled 100ml</h4>
-                            <p class="text-sm text-black mt-1">
-                                Fragancia cálida ideal para climas fríos.
-                            </p>
-                        </div>
-
-                        <div class="mt-4">
-                            <p class="font-bold text-[#2128a6]">Q 1500.00</p>
-
-                            <button 
-                                @click="window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }))"
-                                class="mt-3 w-full bg-[#6F73BF] hover:bg-[#2128a6] text-white text-sm font-semibold py-2.5 rounded-lg">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </article>
-
-                    <!-- CARD 5 -->
-                    <article 
-                        x-data="{
-                            product: {
-                                id: 5,
-                                name: 'Bailarina efecto terciopelo',
-                                price: 400,
-                                image: '/img/bailarinaszapato.webp'
-                            }
-                        }"
-                        class="min-w-[260px] bg-white rounded-2xl shadow-md hover:shadow-xl transition p-5 flex flex-col justify-between snap-start">
-
-                        <div>
-                            <img src="/img/bailarinaszapato.webp" class="rounded-xl mb-4 w-full object-cover" alt="Zapatos">
-                            <h4 class="font-semibold text-[#6F73BF] ">Bailarina efecto terciopelo</h4>
-                            <p class="text-sm text-black mt-1">
-                                Escote cuadrado. Hebilla metálica. Punta redonda.
-                            </p>
-                        </div>
-
-                        <div class="mt-4">
-                            <p class="font-bold text-[#2128a6]">Q 400.00</p>
-
-                            <button 
-                                @click="window.dispatchEvent(new CustomEvent('add-to-cart', { detail: product }))"
-                                class="mt-3 w-full bg-[#6F73BF] hover:bg-[#2128a6] text-white text-sm font-semibold py-2.5 rounded-lg">
-                                Añadir al carrito
-                            </button>
-                        </div>
-                    </article>     
                 </div>
 
-                <!-- Flecha derecha -->
+                {{-- Flecha derecha --}}
                 <button id="btnRight"
                     class="hidden md:flex items-center justify-center absolute -right-4 top-1/2 -translate-y-1/2
                            bg-white shadow-md rounded-full p-3 z-10 hover:bg-gray-100">
@@ -267,7 +208,6 @@
             {{-- Envío gratis --}}
             <div class="flex flex-col items-center">
                 <div class="w-25 h-25 rounded-full bg-[#3d50ff]/10 flex items-center justify-center mb-3">
-                    {{-- icono camión --}}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                         class="w-20 h-20 text-[#2128a6]" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -283,7 +223,6 @@
             {{-- Soporte --}}
             <div class="flex flex-col items-center">
                 <div class="w-25 h-25 rounded-full bg-[#3d50ff]/10 flex items-center justify-center mb-3">
-                    {{-- icono soporte / callcenter --}}
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="2" stroke="currentColor"
                         class="w-20 h-20  text-[#2128a6]">
@@ -300,7 +239,6 @@
             {{-- Garantía --}}
             <div class="flex flex-col items-center">
                 <div class="w-25 h-25 rounded-full bg-[#3d50ff]/10 flex items-center justify-center mb-3">
-                    {{-- icono estrella --}}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                         class="w-20 h-20  text-[#2128a6]" fill="currentColor">
                         <path
@@ -325,9 +263,8 @@
             </h3>
         </div>
 
-        {{-- TARJETA A TODO EL ANCHO --}}
         <div class="w-full">
-            <div class="bg-white rounded-3xl shadow-md overflow-hidden 
+            <div class="bg-white rounded-3xl shadow-md overflow-hidden
                         grid grid-cols-1 md:grid-cols-2 gap-0 items-center w-full">
 
                 {{-- Imagen izquierda --}}
@@ -339,7 +276,7 @@
 
                 {{-- Texto derecha --}}
                 <div class="px-8 md:pl-20 lg:pl-28 py-10 md:py-14 flex flex-col justify-center">
-                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-extrabold 
+                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-extrabold
                                 text-[#6F73BF] leading-tight drop-shadow">
                         Encuentra lo<br>
                         que te inspira...
@@ -350,7 +287,7 @@
                     </p>
 
                     <a href="{{ route('categories') }}"
-                        class="mt-6 inline-flex items-center justify-center 
+                        class="mt-6 inline-flex items-center justify-center
                                 bg-[#2128a6] hover:bg-[#6F73BF]
                                 text-white text-lg font-semibold
                                 px-6 py-2 rounded-full shadow-lg transition
@@ -375,70 +312,72 @@
                 Reseñas de personas que ya confiaron en Nexus.
             </p>
 
-            {{-- TARJETAS DE RESEÑAS --}}
+            @php
+                $reviewsHome = $reviewsHome ?? collect();
+            @endphp
+
             <div class="grid gap-6 md:grid-cols-2">
 
-                {{-- REVIEW 1 --}}
-                <article class="bg-white rounded-2xl shadow-md p-6 flex gap-4 items-start">
-                    {{-- FOTO CLIENTE --}}
-                    <img src="/img/cliente-1.jpg"
-                        alt="Foto cliente"
-                        class="w-20 h-20 rounded-lg object-cover flex-shrink-0">
+                @forelse ($reviewsHome as $review)
+                    @php
+                        $user = $review->usuario;
 
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-semibold text-gray-900 leading-tight">Elisa Veliz</h4>
-                                <p class="text-xs text-gray-400">24 Octubre 2025</p>
+                        $nombreCliente = $user->nombre_completo
+                            ?? $user->name
+                            ?? 'Cliente';
+
+                        $correoCliente = $user->correo_electronico
+                            ?? $user->email
+                            ?? 'correo@ejemplo.com';
+
+                        $fecha = optional($review->review_date)->format('d M Y');
+                        $comentario = $review->comment ?: 'Sin comentario';
+                    @endphp
+
+                    <article class="bg-white rounded-2xl shadow-md p-6 flex gap-4 items-start">
+                        <img src="/img/placeholder.png"
+                            alt="Foto cliente"
+                            class="w-20 h-20 rounded-lg object-cover shrink-0">
+
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 leading-tight">
+                                        {{ $nombreCliente }}
+                                    </h4>
+                                    <p class="text-xs text-gray-400">
+                                        {{ $fecha }}
+                                    </p>
+                                </div>
+
+                                <div class="flex text-[#3d50ff] text-xs">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <i class="fa-solid fa-star mx-0.5
+                                            {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}">
+                                        </i>
+                                    @endfor
+                                </div>
                             </div>
 
-                            {{-- ESTRELLAS --}}
-                            <div class="flex text-[#3d50ff] text-xs">
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                            </div>
+                            <p class="mt-3 text-sm text-gray-600 leading-relaxed">
+                                {{ \Illuminate\Support\Str::limit($comentario, 160) }}
+                            </p>
+
+                            @if($review->producto)
+                                <p class="mt-2 text-xs text-gray-400">
+                                    Producto reseñado:
+                                    <span class="font-semibold text-gray-700">
+                                        {{ $review->producto->nombre_producto }}
+                                    </span>
+                                </p>
+                            @endif
                         </div>
-
-                        <p class="mt-3 text-sm text-gray-600 leading-relaxed">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
-                    </div>
-                </article>
-
-                {{-- REVIEW 2 --}}
-                <article class="bg-white rounded-2xl shadow-md p-6 flex gap-4 items-start">
-                    {{-- FOTO CLIENTE --}}
-                    <img src="/img/cliente-2.jpg"
-                        alt="Foto cliente"
-                        class="w-20 h-20 rounded-lg object-cover flex-shrink-0">
-
-                    <div class="flex-1">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-semibold text-gray-900 leading-tight">Luis Martínez</h4>
-                                <p class="text-xs text-gray-400">18 Octubre 2025</p>
-                            </div>
-
-                            {{-- ESTRELLAS --}}
-                            <div class="flex text-[#3d50ff] text-xs">
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                                <i class="fa-solid fa-star mx-0.5"></i>
-                            </div>
-                        </div>
-
-                        <p class="mt-3 text-sm text-gray-600 leading-relaxed">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
-                    </div>
-                </article>
+                    </article>
+                @empty
+                    <p class="text-sm text-gray-500">
+                        Aún no hay reseñas publicadas. ¡Pronto verás aquí opiniones de nuestros clientes!
+                    </p>
+                @endforelse
 
             </div>
 
@@ -446,4 +385,87 @@
     </section>
 
 </div>
+
+<script>
+    // -----------------------------
+    // CARRUSEL: FLUIDO Y SIN TRABAS
+    // -----------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        const carousel = document.getElementById('carouselProducts');
+        const btnLeft  = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+
+        if (!carousel || !btnLeft || !btnRight) return;
+
+        // Paso: ancho de tarjeta + espacio
+        const getStep = () => {
+            const card = carousel.querySelector('article');
+            if (!card) return 300;
+            const rect = card.getBoundingClientRect();
+            return rect.width + 32; // 32px ≈ gap-8
+        };
+
+        let isScrolling = false;
+        const doScroll = (direction) => {
+            if (isScrolling) return;      // evita doble click rápido
+            isScrolling = true;
+
+            carousel.scrollBy({
+                left: direction * getStep(),
+                behavior: 'smooth'
+            });
+
+            setTimeout(() => {
+                isScrolling = false;
+            }, 400); // tiempo parecido a la animación del scroll
+        };
+
+        btnRight.addEventListener('click', () => {
+            doScroll(1);   // derecha
+        });
+
+        btnLeft.addEventListener('click', () => {
+            const step = getStep();
+            const nuevoScroll = carousel.scrollLeft - step;
+
+            carousel.scrollTo({
+                left: nuevoScroll < 0 ? 0 : nuevoScroll,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // -----------------------------
+    // CARGA DE IMÁGENES
+    // -----------------------------
+    window.loadProductImage = function(productId) {
+        const component = document.querySelector(`[data-product-id="${productId}"]`);
+        if (!component || !component._x_dataStack) return;
+
+        const data = component._x_dataStack[0];
+        const apiUrl = `/api/imagenes/producto/${productId}/principal`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.data && result.data.url_completa) {
+                    data.product.image = result.data.url_completa;
+                } else {
+                    data.product.image = '/img/placeholder.png';
+                }
+            })
+            .catch(() => {
+                data.product.image = '/img/placeholder.png';
+            });
+    };
+
+    document.addEventListener('alpine:init', () => {
+        setTimeout(() => {
+            document.querySelectorAll('[data-product-id]').forEach(element => {
+                const productId = element.getAttribute('data-product-id');
+                if (productId) loadProductImage(productId);
+            });
+        }, 200);
+    });
+</script>
 @endsection
