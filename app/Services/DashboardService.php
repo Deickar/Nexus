@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\Producto;
-use App\Models\Pedido;
-use App\Models\User;
 use App\Models\Categoria;
 use App\Models\Marca;
-use Illuminate\Support\Facades\DB;
+use App\Models\Pedido;
+use App\Models\Producto;
+use App\Models\User;
 
 class DashboardService
 {
@@ -24,7 +23,7 @@ class DashboardService
             'ventas_totales' => Pedido::whereIn('estado', ['pagado', 'enviado', 'entregado'])->sum('monto_total'),
         ];
     }
-    
+
     public function obtenerProductosStockBajo($limite = 10)
     {
         // Mantener Eloquent porque las vistas esperan objetos de modelo
@@ -33,7 +32,7 @@ class DashboardService
             ->where('estado', 'activo')
             ->get();
     }
-    
+
     public function obtenerUltimosPedidos($cantidad = 10)
     {
         // Mantener Eloquent porque las vistas esperan objetos de modelo

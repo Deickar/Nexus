@@ -15,11 +15,11 @@ return new class extends Migration
         Schema::create('categorias', function (Blueprint $table) {
             // Clave primaria
             $table->integer('id_categoria')->autoIncrement()->primary();
-            
+
             // Campos de datos
             $table->string('nombre_categoria', 150)->nullable(false);
             $table->string('descripcion', 255)->nullable();
-            
+
             // Clave foranea auto-referencial (categoria padre)
             $table->integer('id_categoria_padre')->nullable();
             $table->foreign('id_categoria_padre')->references('id_categoria')->on('categorias');

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
 {
@@ -25,7 +25,7 @@ class ReviewController extends Controller
             }
 
             // Solo mostrar reseñas aprobadas por defecto
-            if (!$request->has('include_all')) {
+            if (! $request->has('include_all')) {
                 $query->approved();
             }
 
@@ -33,12 +33,12 @@ class ReviewController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $reviews
+                'data' => $reviews,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener las reseñas: ' . $e->getMessage()
+                'message' => 'Error al obtener las reseñas: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -52,14 +52,14 @@ class ReviewController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_producto' => 'required|integer|exists:productos,id_producto',
                 'rating' => 'required|integer|between:1,5',
-                'comment' => 'nullable|string|max:1000'
+                'comment' => 'nullable|string|max:1000',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Datos de validación incorrectos',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -67,13 +67,13 @@ class ReviewController extends Controller
 
             // Verificar si el usuario ya ha hecho una reseña de este producto
             $existingReview = Review::where('id_usuario', $userId)
-                                  ->where('id_producto', $request->id_producto)
-                                  ->first();
+                ->where('id_producto', $request->id_producto)
+                ->first();
 
             if ($existingReview) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Ya has enviado una reseña para este producto'
+                    'message' => 'Ya has enviado una reseña para este producto',
                 ], 409);
             }
 
@@ -83,7 +83,7 @@ class ReviewController extends Controller
                 'rating' => $request->rating,
                 'comment' => $request->comment,
                 'review_date' => now(),
-                'status' => Review::STATUS_PENDING
+                'status' => Review::STATUS_PENDING,
             ]);
 
             $review->load(['producto', 'usuario']);
@@ -91,13 +91,13 @@ class ReviewController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Reseña enviada exitosamente. Está pendiente de aprobación.',
-                'data' => $review
+                'data' => $review,
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear la reseña: ' . $e->getMessage()
+                'message' => 'Error al crear la reseña: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -112,12 +112,12 @@ class ReviewController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $review
+                'data' => $review,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Reseña no encontrada'
+                'message' => 'Reseña no encontrada',
             ], 404);
         }
     }
@@ -134,20 +134,20 @@ class ReviewController extends Controller
             if ($review->id_usuario !== Auth::id()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No tienes permisos para editar esta reseña'
+                    'message' => 'No tienes permisos para editar esta reseña',
                 ], 403);
             }
 
             $validator = Validator::make($request->all(), [
                 'rating' => 'sometimes|integer|between:1,5',
-                'comment' => 'sometimes|string|max:1000'
+                'comment' => 'sometimes|string|max:1000',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Datos de validación incorrectos',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -157,13 +157,13 @@ class ReviewController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Reseña actualizada exitosamente',
-                'data' => $review
+                'data' => $review,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar la reseña: ' . $e->getMessage()
+                'message' => 'Error al actualizar la reseña: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -180,7 +180,7 @@ class ReviewController extends Controller
             if ($review->id_usuario !== Auth::id()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No tienes permisos para eliminar esta reseña'
+                    'message' => 'No tienes permisos para eliminar esta reseña',
                 ], 403);
             }
 
@@ -188,13 +188,13 @@ class ReviewController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Reseña eliminada exitosamente'
+                'message' => 'Reseña eliminada exitosamente',
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar la reseña: ' . $e->getMessage()
+                'message' => 'Error al eliminar la reseña: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -206,18 +206,18 @@ class ReviewController extends Controller
     {
         try {
             $reviews = Review::with(['producto'])
-                           ->byUser(Auth::id())
-                           ->orderBy('review_date', 'desc')
-                           ->paginate(10);
+                ->byUser(Auth::id())
+                ->orderBy('review_date', 'desc')
+                ->paginate(10);
 
             return response()->json([
                 'success' => true,
-                'data' => $reviews
+                'data' => $reviews,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener tus reseñas: ' . $e->getMessage()
+                'message' => 'Error al obtener tus reseñas: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -230,15 +230,15 @@ class ReviewController extends Controller
     {
         try {
             $query = Review::with(['producto:id_producto,nombre_producto', 'usuario:id_usuario,nombre_completo'])
-                          ->select([
-                              'review_id',
-                              'id_producto',
-                              'id_usuario',
-                              'review_date',
-                              'rating',
-                              'comment',
-                              'status'
-                          ]);
+                ->select([
+                    'review_id',
+                    'id_producto',
+                    'id_usuario',
+                    'review_date',
+                    'rating',
+                    'comment',
+                    'status',
+                ]);
 
             // Filtros opcionales
             if ($request->has('status')) {
@@ -272,7 +272,7 @@ class ReviewController extends Controller
                     'rating' => $review->rating,
                     'comment' => $review->comment,
                     'status' => $review->status,
-                    'status_text' => $this->getStatusText($review->status)
+                    'status_text' => $this->getStatusText($review->status),
                 ];
             });
 
@@ -285,14 +285,14 @@ class ReviewController extends Controller
                     'total' => $reviews->total(),
                     'last_page' => $reviews->lastPage(),
                     'from' => $reviews->firstItem(),
-                    'to' => $reviews->lastItem()
-                ]
+                    'to' => $reviews->lastItem(),
+                ],
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener los datos de reseñas: ' . $e->getMessage()
+                'message' => 'Error al obtener los datos de reseñas: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -302,7 +302,7 @@ class ReviewController extends Controller
      */
     private function getStatusText($status): string
     {
-        return match($status) {
+        return match ($status) {
             Review::STATUS_PENDING => 'Pendiente',
             Review::STATUS_APPROVED => 'Aprobada',
             Review::STATUS_REJECTED => 'Rechazada',

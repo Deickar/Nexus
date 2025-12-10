@@ -59,17 +59,17 @@ return [
             'throw' => false,
             'report' => false,
         ],
-        
+
         'sftp' => [
-        'driver' => 'sftp',
-        'host' => env('SFTP_HOST'),
-        'username' => env('SFTP_USERNAME'),
-        'password' => env('SFTP_PASSWORD'), // Si usas contraseña
-        'privateKey' => env('SFTP_PRIVATE_KEY'), // Si usas clave (como en tu caso)
-        'root' => env('SFTP_ROOT'),
-        // Otros parámetros opcionales
-        'timeout' => 30,
-    ],
+            'driver' => 'sftp',
+            'host' => env('SFTP_HOST'),
+            'username' => env('SFTP_USERNAME'),
+            'password' => env('SFTP_PASSWORD'), // Si usas contraseña
+            'privateKey' => env('SFTP_PRIVATE_KEY'), // Si usas clave (como en tu caso)
+            'root' => env('SFTP_ROOT'),
+            // Otros parámetros opcionales
+            'timeout' => 30,
+        ],
 
     ],
 

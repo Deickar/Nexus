@@ -3,41 +3,36 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioService
 {
     /**
      * Lista usuarios aplicando filtros y paginación.
-     *
-     * @param array $filtros
-     * @param int $perPage
-     * @return LengthAwarePaginator
      */
-   public function listarUsuarios(array $filtros = [], int $perPage = 15): LengthAwarePaginator
-{
-    $query = User::query();
+    public function listarUsuarios(array $filtros = [], int $perPage = 15): LengthAwarePaginator
+    {
+        $query = User::query();
 
-    // Comprobar si la clave 'rol' existe en el array y tiene valor válido.
-    // Usamos array_key_exists para distinguir entre "no existe" y valor '0'.
-    if (array_key_exists('rol', $filtros) && $filtros['rol'] !== null && $filtros['rol'] !== '') {
-        $rol = (int) $filtros['rol'];
-        $query->where('id_rol', $rol);
+        // Comprobar si la clave 'rol' existe en el array y tiene valor válido.
+        // Usamos array_key_exists para distinguir entre "no existe" y valor '0'.
+        if (array_key_exists('rol', $filtros) && $filtros['rol'] !== null && $filtros['rol'] !== '') {
+            $rol = (int) $filtros['rol'];
+            $query->where('id_rol', $rol);
+        }
+
+        $query->orderBy('fecha_creacion', 'desc');
+
+        return $query->paginate($perPage);
     }
-
-    $query->orderBy('fecha_creacion', 'desc');
-
-    return $query->paginate($perPage);
-}
 
     /**
      * Obtener un usuario por su id (lanza ModelNotFoundException si no existe).
      *
-     * @param mixed $id
-     * @return User
+     * @param  mixed  $id
      */
     public function obtenerUsuario($id): User
     {
@@ -47,9 +42,6 @@ class UsuarioService
 
     /**
      * Crear usuario (usa transaction).
-     *
-     * @param array $datos
-     * @return User
      */
     public function crearUsuario(array $datos): User
     {
@@ -67,9 +59,7 @@ class UsuarioService
     /**
      * Actualizar usuario.
      *
-     * @param mixed $id
-     * @param array $datos
-     * @return User
+     * @param  mixed  $id
      */
     public function actualizarUsuario($id, array $datos): User
     {
@@ -78,7 +68,7 @@ class UsuarioService
 
             $datosActualizar = collect($datos)->except('contrasena')->toArray();
 
-            if (!empty($datos['contrasena'])) {
+            if (! empty($datos['contrasena'])) {
                 $datosActualizar['contrasena'] = Hash::make($datos['contrasena']);
             }
 
@@ -91,9 +81,9 @@ class UsuarioService
     /**
      * Eliminar usuario (no permite eliminar al usuario actual).
      *
-     * @param mixed $id
-     * @param mixed|null $idUsuarioActual
-     * @return bool
+     * @param  mixed  $id
+     * @param  mixed|null  $idUsuarioActual
+     *
      * @throws \Exception
      */
     public function eliminarUsuario($id, $idUsuarioActual = null): bool
@@ -105,6 +95,7 @@ class UsuarioService
         return DB::transaction(function () use ($id) {
             $usuario = User::findOrFail($id);
             $usuario->delete();
+
             return true;
         });
     }

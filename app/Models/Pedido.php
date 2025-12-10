@@ -6,32 +6,34 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Modelo Pedido
- * 
+ *
  * Representa una orden de compra realizada por un usuario.
  * Contiene información del pedido y su estado.
  */
 class Pedido extends Model
 {
     protected $table = 'pedidos';
+
     protected $primaryKey = 'id_pedido';
-    
+
     const CREATED_AT = 'fecha_creacion';
+
     const UPDATED_AT = 'fecha_actualizacion';
-    
+
     protected $fillable = [
         'id_usuario',
         'numero_pedido',
         'monto_total',
         'estado',
-        'id_pago'
+        'id_pago',
     ];
-    
+
     protected $casts = [
         'monto_total' => 'decimal:2',
         'fecha_creacion' => 'datetime',
         'fecha_actualizacion' => 'datetime',
     ];
-    
+
     /**
      * Relación con Usuario
      */
@@ -39,7 +41,7 @@ class Pedido extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
     }
-    
+
     /**
      * Relación con Detalles del Pedido
      */
@@ -47,7 +49,7 @@ class Pedido extends Model
     {
         return $this->hasMany(DetallePedido::class, 'id_pedido', 'id_pedido');
     }
-    
+
     /**
      * Relación con Pagos
      */
@@ -55,7 +57,7 @@ class Pedido extends Model
     {
         return $this->hasMany(Pago::class, 'id_pedido', 'id_pedido');
     }
-    
+
     /**
      * Scopes para filtrar por estado
      */
@@ -63,27 +65,27 @@ class Pedido extends Model
     {
         return $query->where('estado', 'pendiente');
     }
-    
+
     public function scopePagado($query)
     {
         return $query->where('estado', 'pagado');
     }
-    
+
     public function scopeEnviado($query)
     {
         return $query->where('estado', 'enviado');
     }
-    
+
     public function scopeEntregado($query)
     {
         return $query->where('estado', 'entregado');
     }
-    
+
     public function scopeCancelado($query)
     {
         return $query->where('estado', 'cancelado');
     }
-    
+
     /**
      * Verificar si el pedido puede ser cancelado
      */
@@ -91,7 +93,7 @@ class Pedido extends Model
     {
         return in_array($this->estado, ['pendiente', 'pagado']);
     }
-    
+
     /**
      * Calcular total del pedido
      */
@@ -101,9 +103,10 @@ class Pedido extends Model
         foreach ($this->detalles as $detalle) {
             $total += $detalle->precio_unitario * $detalle->cantidad;
         }
+
         return $total;
     }
-    
+
     /**
      * Serialización a JSON
      */
@@ -116,7 +119,7 @@ class Pedido extends Model
                 'nombre' => $this->usuario->nombre_completo,
                 'email' => $this->usuario->correo_electronico,
             ],
-            'items' => $this->detalles->map(function($detalle) {
+            'items' => $this->detalles->map(function ($detalle) {
                 return [
                     'id' => $detalle->id_detalle_pedido,
                     'producto' => [
@@ -125,7 +128,7 @@ class Pedido extends Model
                     ],
                     'cantidad' => $detalle->cantidad,
                     'precio_unitario' => (float) $detalle->precio_unitario,
-                    'subtotal' => (float) $detalle->subtotal
+                    'subtotal' => (float) $detalle->subtotal,
                 ];
             }),
             'total' => (float) $this->monto_total,

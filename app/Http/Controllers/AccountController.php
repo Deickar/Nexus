@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
-
     /**
      * PERFIL
      */
@@ -16,14 +15,14 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión');
         }
 
         // Separar nombre en nombre y apellido(s) a partir de nombre_completo
         $nameParts = preg_split('/\s+/', $user->nombre_completo ?? '');
         $firstName = $nameParts[0] ?? '';
-        $lastName  = implode(' ', array_slice($nameParts, 1));
+        $lastName = implode(' ', array_slice($nameParts, 1));
 
         return view('account.profile', compact('user', 'firstName', 'lastName'));
     }
@@ -35,22 +34,22 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión');
         }
 
         // Validación basada en tu tabla `usuarios`
         $request->validate([
             'first_name' => 'required|string|max:100',
-            'last_name'  => 'nullable|string|max:100',
-            'phone'      => 'nullable|string|max:30',
-            'email'      => 'required|email|max:150|unique:usuarios,correo_electronico,' . $user->id_usuario . ',id_usuario',
+            'last_name' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:30',
+            'email' => 'required|email|max:150|unique:usuarios,correo_electronico,'.$user->id_usuario.',id_usuario',
             // 'birth_date' => 'nullable|date', // no existe campo en BD, por eso NO lo guardamos
         ]);
 
         // Guardar en la BD
-        $user->nombre_completo    = trim($request->first_name . ' ' . $request->last_name);
-        $user->telefono           = $request->phone;
+        $user->nombre_completo = trim($request->first_name.' '.$request->last_name);
+        $user->telefono = $request->phone;
         $user->correo_electronico = $request->email;
         // Si algún día agregas fecha_nacimiento en la tabla, aquí se guardaría:
         // $user->fecha_nacimiento   = $request->birth_date;
@@ -91,7 +90,7 @@ class AccountController extends Controller
     {
         $userId = Auth::id();
 
-        if (!$userId) {
+        if (! $userId) {
             return redirect()->route('login');
         }
 
@@ -101,12 +100,12 @@ class AccountController extends Controller
             ->get()
             ->map(function ($review) {
                 return [
-                    'id'      => $review->review_id,
+                    'id' => $review->review_id,
                     'product' => $review->producto->nombre_producto ?? 'Producto no disponible',
-                    'date'    => optional($review->review_date)->format('d/m/Y'),
-                    'rating'  => $review->rating,
+                    'date' => optional($review->review_date)->format('d/m/Y'),
+                    'rating' => $review->rating,
                     'comment' => $review->comment ?: 'Sin comentario',
-                    'status'  => $review->status == Review::STATUS_APPROVED ? 'Publicado' : 'Pendiente',
+                    'status' => $review->status == Review::STATUS_APPROVED ? 'Publicado' : 'Pendiente',
                 ];
             });
 

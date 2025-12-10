@@ -18,10 +18,10 @@ class ImagenProductoController extends Controller
         try {
             // Verificar que el producto existe
             $producto = Producto::find($id_producto);
-            if (!$producto) {
+            if (! $producto) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Producto no encontrado'
+                    'message' => 'Producto no encontrado',
                 ], 404);
             }
 
@@ -33,14 +33,14 @@ class ImagenProductoController extends Controller
                 'success' => true,
                 'data' => [
                     'producto' => $producto,
-                    'imagenes' => $imagenes
-                ]
+                    'imagenes' => $imagenes,
+                ],
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener las imágenes: ' . $e->getMessage()
+                'message' => 'Error al obtener las imágenes: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -53,22 +53,22 @@ class ImagenProductoController extends Controller
         try {
             $imagen = ImagenProducto::with('producto')->find($id_imagen);
 
-            if (!$imagen) {
+            if (! $imagen) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Imagen no encontrada'
+                    'message' => 'Imagen no encontrada',
                 ], 404);
             }
 
             return response()->json([
                 'success' => true,
-                'data' => $imagen
+                'data' => $imagen,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener la imagen: ' . $e->getMessage()
+                'message' => 'Error al obtener la imagen: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -83,14 +83,14 @@ class ImagenProductoController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_producto' => 'required|integer|exists:productos,id_producto',
                 'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Solo archivos de imagen
-                'url_imagen' => 'nullable|string|url' // URL alternativa si no se sube archivo
+                'url_imagen' => 'nullable|string|url', // URL alternativa si no se sube archivo
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Datos inválidos',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -101,13 +101,13 @@ class ImagenProductoController extends Controller
                 $archivo = $request->file('imagen');
 
                 // Crear nombre único para la imagen
-                $nombreArchivo = 'producto_' . $request->id_producto . '_' . time() . '.' . $archivo->getClientOriginalExtension();
+                $nombreArchivo = 'producto_'.$request->id_producto.'_'.time().'.'.$archivo->getClientOriginalExtension();
 
                 // Guardar en storage/app/public/productos/
                 $ruta = $archivo->storeAs('public/productos', $nombreArchivo);
 
                 // URL accesible públicamente
-                $url_imagen = '/storage/productos/' . $nombreArchivo;
+                $url_imagen = '/storage/productos/'.$nombreArchivo;
 
             } elseif ($request->filled('url_imagen')) {
                 // Si se proporcionó una URL externa
@@ -115,26 +115,26 @@ class ImagenProductoController extends Controller
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Debe proporcionar una imagen o una URL de imagen'
+                    'message' => 'Debe proporcionar una imagen o una URL de imagen',
                 ], 422);
             }
 
             // Crear la imagen
             $imagen = ImagenProducto::create([
                 'id_producto' => $request->id_producto,
-                'url_imagen' => $url_imagen
+                'url_imagen' => $url_imagen,
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Imagen agregada exitosamente',
-                'data' => $imagen->load('producto')
+                'data' => $imagen->load('producto'),
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear la imagen: ' . $e->getMessage()
+                'message' => 'Error al crear la imagen: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -147,24 +147,24 @@ class ImagenProductoController extends Controller
         try {
             $imagen = ImagenProducto::find($id_imagen);
 
-            if (!$imagen) {
+            if (! $imagen) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Imagen no encontrada'
+                    'message' => 'Imagen no encontrada',
                 ], 404);
             }
 
             // Validación
             $validator = Validator::make($request->all(), [
                 'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'url_imagen' => 'nullable|string|url'
+                'url_imagen' => 'nullable|string|url',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Datos inválidos',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -176,16 +176,16 @@ class ImagenProductoController extends Controller
                 $archivo = $request->file('imagen');
 
                 // Crear nombre único
-                $nombreArchivo = 'producto_' . $imagen->id_producto . '_' . time() . '.' . $archivo->getClientOriginalExtension();
+                $nombreArchivo = 'producto_'.$imagen->id_producto.'_'.time().'.'.$archivo->getClientOriginalExtension();
 
                 // Guardar nuevo archivo
                 $ruta = $archivo->storeAs('public/productos', $nombreArchivo);
-                $nueva_url = '/storage/productos/' . $nombreArchivo;
+                $nueva_url = '/storage/productos/'.$nombreArchivo;
 
                 // Eliminar archivo anterior si existe en storage
                 if ($url_imagen_anterior && str_contains($url_imagen_anterior, '/storage/productos/')) {
                     $archivo_anterior = str_replace('/storage/productos/', '', $url_imagen_anterior);
-                    Storage::delete('public/productos/' . $archivo_anterior);
+                    Storage::delete('public/productos/'.$archivo_anterior);
                 }
 
             } elseif ($request->filled('url_imagen')) {
@@ -194,7 +194,7 @@ class ImagenProductoController extends Controller
                 // Si cambiamos de archivo local a URL externa, eliminar archivo local
                 if ($url_imagen_anterior && str_contains($url_imagen_anterior, '/storage/productos/')) {
                     $archivo_anterior = str_replace('/storage/productos/', '', $url_imagen_anterior);
-                    Storage::delete('public/productos/' . $archivo_anterior);
+                    Storage::delete('public/productos/'.$archivo_anterior);
                 }
             }
 
@@ -206,13 +206,13 @@ class ImagenProductoController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Imagen actualizada exitosamente',
-                'data' => $imagen->load('producto')
+                'data' => $imagen->load('producto'),
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar la imagen: ' . $e->getMessage()
+                'message' => 'Error al actualizar la imagen: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -225,10 +225,10 @@ class ImagenProductoController extends Controller
         try {
             $imagen = ImagenProducto::find($id_imagen);
 
-            if (!$imagen) {
+            if (! $imagen) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Imagen no encontrada'
+                    'message' => 'Imagen no encontrada',
                 ], 404);
             }
 
@@ -237,7 +237,7 @@ class ImagenProductoController extends Controller
             // Eliminar archivo del storage si es local
             if ($url_imagen && str_contains($url_imagen, '/storage/productos/')) {
                 $archivo = str_replace('/storage/productos/', '', $url_imagen);
-                Storage::delete('public/productos/' . $archivo);
+                Storage::delete('public/productos/'.$archivo);
             }
 
             // Eliminar registro de la base de datos
@@ -245,13 +245,13 @@ class ImagenProductoController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Imagen eliminada exitosamente'
+                'message' => 'Imagen eliminada exitosamente',
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar la imagen: ' . $e->getMessage()
+                'message' => 'Error al eliminar la imagen: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -264,10 +264,10 @@ class ImagenProductoController extends Controller
         try {
             $imagen = ImagenProducto::find($id_imagen);
 
-            if (!$imagen) {
+            if (! $imagen) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Imagen no encontrada'
+                    'message' => 'Imagen no encontrada',
                 ], 404);
             }
 
@@ -277,13 +277,13 @@ class ImagenProductoController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Imagen establecida como principal',
-                'data' => $imagen
+                'data' => $imagen,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al establecer imagen principal: ' . $e->getMessage()
+                'message' => 'Error al establecer imagen principal: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -300,13 +300,13 @@ class ImagenProductoController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $imagenes
+                'data' => $imagenes,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener todas las imágenes: ' . $e->getMessage()
+                'message' => 'Error al obtener todas las imágenes: '.$e->getMessage(),
             ], 500);
         }
     }

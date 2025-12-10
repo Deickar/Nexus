@@ -43,7 +43,7 @@ class WebAuthController extends Controller
              */
             $user = $resultado['user'] ?? null;
 
-            if (!$user) {
+            if (! $user) {
                 // Fallback por si no trae 'user'
                 return back()
                     ->withErrors(['correo_electronico' => 'No se pudo obtener el usuario desde AuthService'])

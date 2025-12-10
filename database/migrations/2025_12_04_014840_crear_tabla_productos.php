@@ -15,21 +15,21 @@ return new class extends Migration
         Schema::create('productos', function (Blueprint $table) {
             // Clave primaria
             $table->integer('id_producto')->autoIncrement()->primary();
-            
+
             // Campos de datos
             $table->string('nombre_producto', 150)->nullable(false);
             $table->text('descripcion')->nullable();
             $table->decimal('precio', 10, 2)->nullable(false);
             $table->integer('existencia')->nullable(false)->default(0);
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
-            
+
             // Claves foraneas
             $table->integer('id_categoria')->nullable(false);
             $table->foreign('id_categoria')->references('id_categoria')->on('categorias');
-            
+
             $table->integer('id_marca')->nullable(false);
             $table->foreign('id_marca')->references('id_marca')->on('marcas');
-            
+
             // Timestamps
             $table->dateTime('fecha_creacion')->useCurrent();
             $table->dateTime('fecha_actualizacion')->nullable()->useCurrentOnUpdate();

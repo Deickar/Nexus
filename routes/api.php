@@ -1,12 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ProductoController;
-use App\Http\Controllers\Api\CategoriaController;
-use App\Http\Controllers\Api\MarcaController;
-use App\Http\Controllers\Api\CarritoController;
-use App\Http\Controllers\Api\PedidoController;
-use App\Http\Controllers\Api\ImagenProductoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,7 +47,7 @@ Route::group([], function () {
      * Response 422: Error de validación
      */
     Route::post('/register', [AuthController::class, 'register'])
-    ->name('api.register');
+        ->name('api.register');
 
     /**
      * POST /api/login
@@ -69,7 +63,6 @@ Route::group([], function () {
      * Response 401: Credenciales incorrectas
      * Response 422: Error de validación
      */
-
     Route::post('/login', [AuthController::class, 'login']);
 
     /**
@@ -150,10 +143,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 
-
 // API de Imágenes de Productos
 Route::get('/imagenes/test-controller', [\App\Http\Controllers\Api\ImagenProductoController::class, 'test']);
-Route::get('/imagenes/test', function() {
+Route::get('/imagenes/test', function () {
     return response()->json(['message' => 'Test ruta funcionando']);
 });
 

@@ -18,7 +18,6 @@ use Illuminate\Foundation\Http\FormRequest;
  * Nota: No validamos si las credenciales son correctas aquí,
  * eso se hace en el controlador después de la validación de formato.
  *
- * @package App\Http\Requests
  * @version Laravel 12.39.0
  */
 class LoginRequest extends FormRequest
@@ -28,8 +27,6 @@ class LoginRequest extends FormRequest
      *
      * Para el login, cualquier usuario (incluso no autenticado) puede
      * hacer esta petición, por lo que siempre retornamos true.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {

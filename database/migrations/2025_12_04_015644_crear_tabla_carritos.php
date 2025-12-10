@@ -15,14 +15,14 @@ return new class extends Migration
         Schema::create('carritos', function (Blueprint $table) {
             // Clave primaria
             $table->integer('id_carrito')->autoIncrement()->primary();
-            
+
             // Clave foranea
             $table->integer('id_usuario')->nullable(false);
             $table->foreign('id_usuario')->references('id_usuario')->on('usuarios');
-            
+
             // Campos de datos
             $table->enum('estado', ['abierto', 'cerrado', 'cancelado'])->default('abierto');
-            
+
             // Timestamps
             $table->dateTime('fecha_creacion')->useCurrent();
             $table->dateTime('fecha_actualizacion')->nullable()->useCurrentOnUpdate();

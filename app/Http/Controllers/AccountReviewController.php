@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Review;
 use App\Models\Producto;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -30,9 +30,9 @@ class AccountReviewController extends Controller
             ->get(['id_producto', 'nombre_producto']);
 
         return view('account.reviews', [
-    'reviews'   => $reviews,
-    'productos' => $productos,
-]);
+            'reviews' => $reviews,
+            'productos' => $productos,
+        ]);
     }
 
     /**
@@ -44,13 +44,13 @@ class AccountReviewController extends Controller
 
         $validator = Validator::make($request->all(), [
             'id_producto' => 'required|integer|exists:productos,id_producto',
-            'rating'      => 'required|integer|between:1,5',
-            'comment'     => 'nullable|string|max:1000',
+            'rating' => 'required|integer|between:1,5',
+            'comment' => 'nullable|string|max:1000',
         ], [
             'id_producto.required' => 'Debes seleccionar un producto.',
-            'id_producto.exists'   => 'El producto seleccionado no existe.',
-            'rating.required'      => 'Debes seleccionar una valoración.',
-            'rating.between'       => 'La valoración debe ser entre 1 y 5 estrellas.',
+            'id_producto.exists' => 'El producto seleccionado no existe.',
+            'rating.required' => 'Debes seleccionar una valoración.',
+            'rating.between' => 'La valoración debe ser entre 1 y 5 estrellas.',
         ]);
 
         if ($validator->fails()) {
@@ -74,11 +74,11 @@ class AccountReviewController extends Controller
 
         Review::create([
             'id_producto' => $request->id_producto,
-            'id_usuario'  => $userId,
+            'id_usuario' => $userId,
             'review_date' => now(),
-            'rating'      => $request->rating,
-            'comment'     => $request->comment,
-            'status'      => \App\Models\Review::STATUS_PENDING, // pendiente de aprobación
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+            'status' => \App\Models\Review::STATUS_PENDING, // pendiente de aprobación
         ]);
 
         return redirect()

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ImagenProducto;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ImagenProductoController extends Controller
 {
@@ -18,24 +18,24 @@ class ImagenProductoController extends Controller
     {
         try {
             $imagenes = ImagenProducto::where('id_producto', $idProducto)
-                                   ->get()
-                                   ->map(function ($imagen) {
-                                       return [
-                                           'id_imagen' => $imagen->id_imagen,
-                                           'id_producto' => $imagen->id_producto,
-                                           'url_imagen' => $imagen->url_imagen,
-                                           'url_completa' => $this->buildImageUrl($imagen->url_imagen)
-                                       ];
-                                   });
+                ->get()
+                ->map(function ($imagen) {
+                    return [
+                        'id_imagen' => $imagen->id_imagen,
+                        'id_producto' => $imagen->id_producto,
+                        'url_imagen' => $imagen->url_imagen,
+                        'url_completa' => $this->buildImageUrl($imagen->url_imagen),
+                    ];
+                });
 
             return response()->json([
                 'success' => true,
-                'data' => $imagenes
+                'data' => $imagenes,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener imágenes: ' . $e->getMessage()
+                'message' => 'Error al obtener imágenes: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -47,24 +47,24 @@ class ImagenProductoController extends Controller
     {
         try {
             // Debug: verificar parámetro
-            if (!$idProducto) {
+            if (! $idProducto) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'ID de producto no proporcionado'
+                    'message' => 'ID de producto no proporcionado',
                 ], 400);
             }
 
             // Debug: buscar imagen
             $imagen = ImagenProducto::where('id_producto', $idProducto)->first();
 
-            if (!$imagen) {
+            if (! $imagen) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No se encontró imagen para el producto ' . $idProducto,
+                    'message' => 'No se encontró imagen para el producto '.$idProducto,
                     'data' => [
                         'url_imagen' => '/img/placeholder.png',
-                        'url_completa' => url('/img/placeholder.png')
-                    ]
+                        'url_completa' => url('/img/placeholder.png'),
+                    ],
                 ], 404);
             }
 
@@ -76,23 +76,23 @@ class ImagenProductoController extends Controller
                 'debug' => [
                     'id_producto_recibido' => $idProducto,
                     'imagen_encontrada' => true,
-                    'url_original' => $imagen->url_imagen
+                    'url_original' => $imagen->url_imagen,
                 ],
                 'data' => [
                     'id_imagen' => $imagen->id_imagen,
                     'id_producto' => $imagen->id_producto,
                     'url_imagen' => $imagen->url_imagen,
-                    'url_completa' => $urlCompleta
-                ]
+                    'url_completa' => $urlCompleta,
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener imagen principal: ' . $e->getMessage(),
+                'message' => 'Error al obtener imagen principal: '.$e->getMessage(),
                 'debug' => [
                     'id_producto' => $idProducto,
-                    'exception' => $e->getMessage()
-                ]
+                    'exception' => $e->getMessage(),
+                ],
             ], 500);
         }
     }
@@ -104,25 +104,25 @@ class ImagenProductoController extends Controller
     {
         try {
             $imagenes = ImagenProducto::with('producto:id_producto,nombre_producto')
-                                    ->get()
-                                    ->map(function ($imagen) {
-                                        return [
-                                            'id_imagen' => $imagen->id_imagen,
-                                            'id_producto' => $imagen->id_producto,
-                                            'producto' => $imagen->producto->nombre_producto ?? 'Sin producto',
-                                            'url_imagen' => $imagen->url_imagen,
-                                            'url_completa' => $this->buildImageUrl($imagen->url_imagen)
-                                        ];
-                                    });
+                ->get()
+                ->map(function ($imagen) {
+                    return [
+                        'id_imagen' => $imagen->id_imagen,
+                        'id_producto' => $imagen->id_producto,
+                        'producto' => $imagen->producto->nombre_producto ?? 'Sin producto',
+                        'url_imagen' => $imagen->url_imagen,
+                        'url_completa' => $this->buildImageUrl($imagen->url_imagen),
+                    ];
+                });
 
             return response()->json([
                 'success' => true,
-                'data' => $imagenes
+                'data' => $imagenes,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener imágenes: ' . $e->getMessage()
+                'message' => 'Error al obtener imágenes: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -135,29 +135,29 @@ class ImagenProductoController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_producto' => 'required|integer|exists:productos,id_producto',
-                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Datos de validación incorrectos',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
             // Subir imagen al servidor SFTP
             $imagen = $request->file('imagen');
-            $nombreArchivo = time() . '_' . $imagen->getClientOriginalName();
+            $nombreArchivo = time().'_'.$imagen->getClientOriginalName();
 
             // Subir directamente a la raíz de nexus_storage (sin subcarpeta productos)
             Storage::disk('sftp_remote')->put($nombreArchivo, file_get_contents($imagen->getPathname()));
 
             // La URL que guardaremos en la BD será la ruta del servidor remoto
-            $urlImagen = '/var/www/nexus_storage/' . $nombreArchivo;            // Guardar en base de datos
+            $urlImagen = '/var/www/nexus_storage/'.$nombreArchivo;            // Guardar en base de datos
             $imagenProducto = ImagenProducto::create([
                 'id_producto' => $request->id_producto,
-                'url_imagen' => $urlImagen
+                'url_imagen' => $urlImagen,
             ]);
 
             return response()->json([
@@ -167,14 +167,14 @@ class ImagenProductoController extends Controller
                     'id_imagen' => $imagenProducto->id_imagen,
                     'id_producto' => $imagenProducto->id_producto,
                     'url_imagen' => $imagenProducto->url_imagen,
-                    'url_completa' => $this->buildImageUrl($imagenProducto->url_imagen)
-                ]
+                    'url_completa' => $this->buildImageUrl($imagenProducto->url_imagen),
+                ],
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al subir imagen: ' . $e->getMessage()
+                'message' => 'Error al subir imagen: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -196,13 +196,13 @@ class ImagenProductoController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Imagen eliminada exitosamente'
+                'message' => 'Imagen eliminada exitosamente',
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar imagen: ' . $e->getMessage()
+                'message' => 'Error al eliminar imagen: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -215,7 +215,7 @@ class ImagenProductoController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Controlador ImagenProductoController funcionando',
-            'timestamp' => now()
+            'timestamp' => now(),
         ]);
     }
 
@@ -233,8 +233,9 @@ class ImagenProductoController extends Controller
         if (str_starts_with($urlImagen, '/var/www/nexus_storage/')) {
             // Extraer solo el nombre del archivo
             $fileName = basename($urlImagen);
+
             // Construir URL apuntando directamente a nexus_storage
-            return 'http://' . env('SFTP_HOST') . ':8000/' . $fileName;
+            return 'http://'.env('SFTP_HOST').':8000/'.$fileName;
         }
 
         // Si es una ruta local, construir URL local
@@ -252,31 +253,31 @@ class ImagenProductoController extends Controller
             if (empty($productIds)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No se proporcionaron IDs de productos'
+                    'message' => 'No se proporcionaron IDs de productos',
                 ], 400);
             }
 
             $imagenes = ImagenProducto::whereIn('id_producto', $productIds)
-                                   ->get()
-                                   ->groupBy('id_producto')
-                                   ->map(function ($imagenesProducto) {
-                                       return $imagenesProducto->map(function ($imagen) {
-                                           return [
-                                               'id_imagen' => $imagen->id_imagen,
-                                               'url_imagen' => $imagen->url_imagen,
-                                               'url_completa' => $this->buildImageUrl($imagen->url_imagen)
-                                           ];
-                                       });
-                                   });
+                ->get()
+                ->groupBy('id_producto')
+                ->map(function ($imagenesProducto) {
+                    return $imagenesProducto->map(function ($imagen) {
+                        return [
+                            'id_imagen' => $imagen->id_imagen,
+                            'url_imagen' => $imagen->url_imagen,
+                            'url_completa' => $this->buildImageUrl($imagen->url_imagen),
+                        ];
+                    });
+                });
 
             return response()->json([
                 'success' => true,
-                'data' => $imagenes
+                'data' => $imagenes,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener imágenes: ' . $e->getMessage()
+                'message' => 'Error al obtener imágenes: '.$e->getMessage(),
             ], 500);
         }
     }

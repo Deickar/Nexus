@@ -15,11 +15,11 @@ return new class extends Migration
         Schema::create('imagenes_producto', function (Blueprint $table) {
             // Clave primaria
             $table->integer('id_imagen')->autoIncrement()->primary();
-            
+
             // Clave foranea
             $table->integer('id_producto')->nullable(false);
             $table->foreign('id_producto')->references('id_producto')->on('productos');
-            
+
             // Campos de datos
             $table->string('url_imagen', 255)->nullable(false);
         });

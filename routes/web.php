@@ -1,18 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ProductoAdminController;
-use App\Http\Controllers\Admin\CategoriaAdminController;
-use App\Http\Controllers\Admin\MarcaAdminController;
-use App\Http\Controllers\Admin\PedidoAdminController;
-use App\Http\Controllers\Admin\UsuarioAdminController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AccountReviewController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountReviewController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImagenProductoController;
 use App\Http\Controllers\WebAuthController;
-use App\Http\Controllers\ImagenProductoController;  // nuevo controlador web de login
+use Illuminate\Support\Facades\Route;  // nuevo controlador web de login
 use Illuminate\Support\Facades\Storage;
+
 /*
 |--------------------------------------------------------------------------
 | PÁGINAS PÚBLICAS
@@ -23,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Ruta para actualizar imágenes específicas
-Route::get('/update/imagenes', function() {
+Route::get('/update/imagenes', function () {
     // Actualizar imagen del mouse gamer
     $mouseImg = \App\Models\ImagenProducto::where('id_producto', 1)->first();
     if ($mouseImg) {
@@ -33,11 +28,11 @@ Route::get('/update/imagenes', function() {
 
     return response()->json([
         'mensaje' => 'Imagen del mouse actualizada',
-        'imagen' => $mouseImg
+        'imagen' => $mouseImg,
     ]);
-});// Categorías
+}); // Categorías
 // Ruta para actualizar imágenes específicas
-Route::get('/update/imagenes', function() {
+Route::get('/update/imagenes', function () {
     // Actualizar imagen del mouse gamer
     $mouseImg = \App\Models\ImagenProducto::where('id_producto', 1)->first();
     if ($mouseImg) {
@@ -47,9 +42,9 @@ Route::get('/update/imagenes', function() {
 
     return response()->json([
         'mensaje' => 'Imagen del mouse actualizada',
-        'imagen' => $mouseImg
+        'imagen' => $mouseImg,
     ]);
-});// Categorías
+}); // Categorías
 Route::get('/categories', function () {
     return view('categories');
 })->name('categories');
@@ -149,13 +144,10 @@ Route::middleware('auth')->prefix('mi-cuenta')->name('account.')->group(function
         ->name('favorites');
 });
 
-
-
 // categorias
 Route::get('/categorias', function () {
     return view('categories');
 })->name('categories');
-
 
 Route::get('/categorias/{slug}', function ($slug) {
 
@@ -179,7 +171,7 @@ Route::get('/categorias/{slug}', function ($slug) {
 
     return view('category-page', [
         'slug' => $slug,
-        'products' => $products[$slug] ?? []  // Si no existe la categoría → vacío
+        'products' => $products[$slug] ?? [],  // Si no existe la categoría → vacío
     ]);
 
 })->name('category.show');
@@ -190,11 +182,11 @@ Route::get('/test-sftp', function () {
 
     try {
         $disk = Storage::disk($diskName);
-        
+
         // 1. Crear un archivo de prueba para confirmar la escritura
-        $testContent = 'Conexión SFTP exitosa a ' . $disk->path('') . ' el ' . now();
-        $testFilePath = 'test_connection_' . time() . '.txt';
-        
+        $testContent = 'Conexión SFTP exitosa a '.$disk->path('').' el '.now();
+        $testFilePath = 'test_connection_'.time().'.txt';
+
         $disk->put($testFilePath, $testContent);
 
         // 2. Listar archivos para confirmar lectura y conectividad
@@ -202,14 +194,14 @@ Route::get('/test-sftp', function () {
 
         // 3. Opcional: Eliminar el archivo de prueba
         $disk->delete($testFilePath);
-        
+
         return "✅ **Conexión SFTP exitosa** al disco '$diskName'.<br>"
-             . "Archivo '$testFilePath' creado y eliminado correctamente.<br>"
-             . "Archivos encontrados en la raíz remota (primero 5): " . implode(', ', array_slice($files, 0, 5));
+             ."Archivo '$testFilePath' creado y eliminado correctamente.<br>"
+             .'Archivos encontrados en la raíz remota (primero 5): '.implode(', ', array_slice($files, 0, 5));
 
     } catch (\Exception $e) {
         // En caso de error, muestra el mensaje de excepción para diagnóstico
         return "❌ **Error de conexión SFTP** al disco '$diskName':<br>"
-             . "Mensaje: " . $e->getMessage();
+             .'Mensaje: '.$e->getMessage();
     }
 });

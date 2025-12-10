@@ -19,7 +19,6 @@ use Illuminate\Foundation\Http\FormRequest;
  * - direccion: Dirección opcional (máximo 255 caracteres)
  * - id_rol: ID del rol opcional (debe existir en tabla roles)
  *
- * @package App\Http\Requests
  * @version Laravel 12.39.0
  */
 class RegisterRequest extends FormRequest
@@ -29,8 +28,6 @@ class RegisterRequest extends FormRequest
      *
      * Para el registro, cualquier usuario (incluso no autenticado) puede
      * hacer esta petición, por lo que siempre retornamos true.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {

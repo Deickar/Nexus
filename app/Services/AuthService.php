@@ -22,7 +22,7 @@ class AuthService
 
         return [
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 
@@ -30,7 +30,7 @@ class AuthService
     {
         $user = User::where('correo_electronico', $email)->first();
 
-        if (!$user || !Hash::check($password, $user->contrasena)) {
+        if (! $user || ! Hash::check($password, $user->contrasena)) {
             throw new \Exception('Las credenciales proporcionadas son incorrectas');
         }
 
@@ -38,7 +38,7 @@ class AuthService
 
         return [
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 

@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage; // Para simular la subida de archivos
 use Tests\TestCase;
 
@@ -14,8 +13,6 @@ class AdminControllerTest extends TestCase
 
     /**
      * Prueba el endpoint de actualización de perfil de administrador (updateProfile).
-     *
-     * @return void
      */
     public function test_admin_profile_can_be_updated_successfully(): void
     {
@@ -67,7 +64,6 @@ class AdminControllerTest extends TestCase
         // Simulación de aserción si el controlador estuviera completo:
         // $this->assertEquals('New Admin Name', $admin->name);
         // $this->assertEquals('new@example.com', $admin->email);
-
 
         // 3.3. Afirmar la presencia de datos en la DB (Verificación de bajo nivel)
         $this->assertDatabaseHas('users', [

@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class ImagenProducto extends Model
 {
     protected $table = 'imagenes_producto';
+
     protected $primaryKey = 'id_imagen';
-    
+
     public $timestamps = false;
-    
+
     protected $fillable = [
         'id_producto',
-        'url_imagen'
+        'url_imagen',
     ];
-    
+
     /**
      * Relación con Producto
      */

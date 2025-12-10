@@ -6,28 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Modelo Carrito
- * 
+ *
  * Representa el carrito de compras de un usuario.
  * Un usuario puede tener un carrito activo a la vez.
  */
 class Carrito extends Model
 {
     protected $table = 'carritos';
+
     protected $primaryKey = 'id_carrito';
-    
+
     const CREATED_AT = 'fecha_creacion';
+
     const UPDATED_AT = 'fecha_actualizacion';
-    
+
     protected $fillable = [
         'id_usuario',
-        'estado'
+        'estado',
     ];
-    
+
     protected $casts = [
         'fecha_creacion' => 'datetime',
         'fecha_actualizacion' => 'datetime',
     ];
-    
+
     /**
      * Relación con Usuario
      */
@@ -35,7 +37,7 @@ class Carrito extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario', 'id_usuario');
     }
-    
+
     /**
      * Relación con Detalles del Carrito
      */
@@ -43,7 +45,7 @@ class Carrito extends Model
     {
         return $this->hasMany(DetalleCarrito::class, 'id_carrito', 'id_carrito');
     }
-    
+
     /**
      * Scope para carritos abiertos
      */
@@ -51,7 +53,7 @@ class Carrito extends Model
     {
         return $query->where('estado', 'abierto');
     }
-    
+
     /**
      * Calcular total del carrito
      */
@@ -61,9 +63,10 @@ class Carrito extends Model
         foreach ($this->detalles as $detalle) {
             $total += $detalle->producto->precio * $detalle->cantidad;
         }
+
         return $total;
     }
-    
+
     /**
      * Contar items en el carrito
      */
@@ -71,16 +74,17 @@ class Carrito extends Model
     {
         return $this->detalles->sum('cantidad');
     }
-    
+
     /**
      * Vaciar carrito
      */
     public function vaciar()
     {
         $this->detalles()->delete();
+
         return true;
     }
-    
+
     /**
      * Serialización a JSON
      */
@@ -90,7 +94,7 @@ class Carrito extends Model
             'id' => $this->id_carrito,
             'usuario_id' => $this->id_usuario,
             'estado' => $this->estado,
-            'items' => $this->detalles->map(function($detalle) {
+            'items' => $this->detalles->map(function ($detalle) {
                 return [
                     'id' => $detalle->id_detalle_carrito,
                     'producto' => [
@@ -100,7 +104,7 @@ class Carrito extends Model
                         'imagen' => $detalle->producto->imagenes->first()->url_imagen ?? null,
                     ],
                     'cantidad' => $detalle->cantidad,
-                    'subtotal' => (float) ($detalle->producto->precio * $detalle->cantidad)
+                    'subtotal' => (float) ($detalle->producto->precio * $detalle->cantidad),
                 ];
             }),
             'total_items' => $this->contarItems(),

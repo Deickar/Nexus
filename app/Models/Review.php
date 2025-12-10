@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Review extends Model
 {
     protected $table = 'reviews';
+
     protected $primaryKey = 'review_id';
 
     // Deshabilitar timestamps automáticos ya que usamos review_date
@@ -19,18 +20,20 @@ class Review extends Model
         'review_date',
         'rating',
         'comment',
-        'status'
+        'status',
     ];
 
     protected $casts = [
         'review_date' => 'datetime',
         'rating' => 'integer',
-        'status' => 'integer'
+        'status' => 'integer',
     ];
 
     // Constantes para el estado
     const STATUS_PENDING = 0;
+
     const STATUS_APPROVED = 1;
+
     const STATUS_REJECTED = 2;
 
     // Relaciones

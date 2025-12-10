@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Modelo Producto
- * 
+ *
  * Representa un producto en el catálogo del e-commerce.
  * Incluye información básica, precio, stock y relaciones con categorías y marcas.
  */
@@ -14,14 +14,15 @@ class Producto extends Model
 {
     // Nombre de la tabla en la base de datos
     protected $table = 'productos';
-    
+
     // Clave primaria
     protected $primaryKey = 'id_producto';
-    
+
     // Timestamps personalizados
     const CREATED_AT = 'fecha_creacion';
+
     const UPDATED_AT = 'fecha_actualizacion';
-    
+
     // Campos que se pueden asignar masivamente
     protected $fillable = [
         'nombre_producto',
@@ -30,12 +31,12 @@ class Producto extends Model
         'existencia',
         'id_categoria',
         'id_marca',
-        'estado'
+        'estado',
     ];
-    
+
     // Campos ocultos en JSON
     protected $hidden = [];
-    
+
     // Casteo de tipos
     protected $casts = [
         'precio' => 'decimal:2',
@@ -43,7 +44,7 @@ class Producto extends Model
         'fecha_creacion' => 'datetime',
         'fecha_actualizacion' => 'datetime',
     ];
-    
+
     /**
      * Relación con Categoría
      * Un producto pertenece a una categoría
@@ -52,7 +53,7 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
     }
-    
+
     /**
      * Relación con Marca
      * Un producto pertenece a una marca
@@ -61,7 +62,7 @@ class Producto extends Model
     {
         return $this->belongsTo(Marca::class, 'id_marca', 'id_marca');
     }
-    
+
     /**
      * Relación con Imágenes
      * Un producto puede tener múltiples imágenes
@@ -70,7 +71,7 @@ class Producto extends Model
     {
         return $this->hasMany(ImagenProducto::class, 'id_producto', 'id_producto');
     }
-    
+
     /**
      * Relación con Movimientos de Inventario
      * Un producto puede tener múltiples movimientos
@@ -79,7 +80,7 @@ class Producto extends Model
     {
         return $this->hasMany(MovimientoInventario::class, 'id_producto', 'id_producto');
     }
-    
+
     /**
      * Scope para productos activos
      */
@@ -87,7 +88,7 @@ class Producto extends Model
     {
         return $query->where('estado', 'activo');
     }
-    
+
     /**
      * Scope para productos con stock
      */
@@ -95,16 +96,16 @@ class Producto extends Model
     {
         return $query->where('existencia', '>', 0);
     }
-    
+
     /**
      * Scope para buscar productos
      */
     public function scopeBuscar($query, $termino)
     {
         return $query->where('nombre_producto', 'like', "%{$termino}%")
-                    ->orWhere('descripcion', 'like', "%{$termino}%");
+            ->orWhere('descripcion', 'like', "%{$termino}%");
     }
-    
+
     /**
      * Verificar si el producto tiene stock suficiente
      */
@@ -112,7 +113,7 @@ class Producto extends Model
     {
         return $this->existencia >= $cantidad;
     }
-    
+
     /**
      * Reducir stock del producto
      */
@@ -121,11 +122,13 @@ class Producto extends Model
         if ($this->tieneStock($cantidad)) {
             $this->existencia -= $cantidad;
             $this->save();
+
             return true;
         }
+
         return false;
     }
-    
+
     /**
      * Aumentar stock del producto
      */
@@ -133,9 +136,10 @@ class Producto extends Model
     {
         $this->existencia += $cantidad;
         $this->save();
+
         return true;
     }
-    
+
     /**
      * Serialización a JSON para API
      */
@@ -149,16 +153,16 @@ class Producto extends Model
             'stock' => $this->existencia,
             'categoria' => $this->categoria ? [
                 'id' => $this->categoria->id_categoria,
-                'nombre' => $this->categoria->nombre_categoria
+                'nombre' => $this->categoria->nombre_categoria,
             ] : null,
             'marca' => $this->marca ? [
                 'id' => $this->marca->id_marca,
-                'nombre' => $this->marca->nombre_marca
+                'nombre' => $this->marca->nombre_marca,
             ] : null,
-            'imagenes' => $this->imagenes->map(function($imagen) {
+            'imagenes' => $this->imagenes->map(function ($imagen) {
                 return [
                     'id' => $imagen->id_imagen,
-                    'url' => $imagen->url_imagen
+                    'url' => $imagen->url_imagen,
                 ];
             }),
             'estado' => $this->estado,

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Services\AuthService;
 use App\Services\PasswordResetService;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     protected $authService;
+
     protected $passwordResetService;
 
     public function __construct(AuthService $authService, PasswordResetService $passwordResetService)
@@ -35,7 +36,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
@@ -75,17 +76,17 @@ class AuthController extends Controller
     public function forgotPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email'
+            'email' => 'required|email',
         ], [
             'email.required' => 'El correo electronico es requerido',
-            'email.email' => 'El correo electronico no es valido'
+            'email.email' => 'El correo electronico no es valido',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error de validacion',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -95,12 +96,12 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $resultado['message'],
-                'token' => $resultado['token'] ?? null // Solo para desarrollo
+                'token' => $resultado['token'] ?? null, // Solo para desarrollo
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
@@ -114,21 +115,21 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'token' => 'required|string',
-            'password' => 'required|string|min:6|confirmed'
+            'password' => 'required|string|min:6|confirmed',
         ], [
             'email.required' => 'El correo electronico es requerido',
             'email.email' => 'El correo electronico no es valido',
             'token.required' => 'El token es requerido',
             'password.required' => 'La contrasena es requerida',
             'password.min' => 'La contrasena debe tener al menos 6 caracteres',
-            'password.confirmed' => 'Las contrasenas no coinciden'
+            'password.confirmed' => 'Las contrasenas no coinciden',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error de validacion',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -141,12 +142,12 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => $resultado['message']
+                'message' => $resultado['message'],
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }

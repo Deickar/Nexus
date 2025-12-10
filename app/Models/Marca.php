@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Marca extends Model
 {
     protected $table = 'marcas';
+
     protected $primaryKey = 'id_marca';
-    
+
     public $timestamps = false;
-    
+
     protected $fillable = [
         'nombre_marca',
-        'descripcion'
+        'descripcion',
     ];
-    
+
     /**
      * Relación con Productos
      */
@@ -23,7 +24,7 @@ class Marca extends Model
     {
         return $this->hasMany(Producto::class, 'id_marca', 'id_marca');
     }
-    
+
     public function toArray()
     {
         return [

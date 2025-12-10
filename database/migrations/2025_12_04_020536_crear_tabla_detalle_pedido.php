@@ -15,14 +15,14 @@ return new class extends Migration
         Schema::create('detalle_pedido', function (Blueprint $table) {
             // Clave primaria
             $table->integer('id_detalle_pedido')->autoIncrement()->primary();
-            
+
             // Claves foraneas
             $table->integer('id_pedido')->nullable(false);
             $table->foreign('id_pedido')->references('id_pedido')->on('pedidos');
-            
+
             $table->integer('id_producto')->nullable(false);
             $table->foreign('id_producto')->references('id_producto')->on('productos');
-            
+
             // Campos de datos
             $table->integer('cantidad')->nullable(false);
             $table->decimal('precio_unitario', 10, 2)->nullable(false);

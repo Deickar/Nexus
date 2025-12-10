@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     // Nombre de la tabla en la base de datos
     protected $table = 'usuarios';
@@ -20,10 +20,12 @@ class User extends Authenticatable
 
     // Si la PK es autoincremental y es int (ajusta si no es el caso)
     public $incrementing = true;
+
     protected $keyType = 'int';
 
     // Nombres de las columnas de timestamps (Laravel los usará automáticamente)
     const CREATED_AT = 'fecha_creacion';
+
     const UPDATED_AT = 'fecha_actualizacion';
 
     // Campos que se pueden asignar masivamente
@@ -53,7 +55,7 @@ class User extends Authenticatable
      */
     public function setContrasenaAttribute($value)
     {
-        if (!is_null($value) && $value !== '') {
+        if (! is_null($value) && $value !== '') {
             // Si ya está hasheada (por alguna razón), no volver a hashear:
             if (Hash::needsRehash($value)) {
                 $this->attributes['contrasena'] = Hash::make($value);
