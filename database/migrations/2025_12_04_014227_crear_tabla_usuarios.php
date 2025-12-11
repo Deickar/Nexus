@@ -14,7 +14,7 @@ return new class extends Migration
         // Crear tabla usuarios
         Schema::create('usuarios', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_usuario')->autoIncrement()->primary();
+            $table->id('id_usuario');
 
             // Campos de datos
             $table->string('nombre_completo', 150)->nullable(false);
@@ -24,9 +24,8 @@ return new class extends Migration
             $table->string('direccion', 255)->nullable();
 
             // Clave foranea
-            $table->integer('id_rol')->nullable(false);
-            $table->foreign('id_rol')->references('id_rol')->on('roles');
-
+            $table->unsignedBigInteger("id_rol");
+            $table->foreign("id_rol")->references("id_rol")->on("roles");
             // Timestamps
             $table->dateTime('fecha_creacion')->useCurrent();
             $table->dateTime('fecha_actualizacion')->nullable()->useCurrentOnUpdate();
@@ -38,6 +37,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('usuarios',function(Blueprint $table){
+            $table->dropForeign(['id_rol']);
+        });
         // Eliminar tabla usuarios
         Schema::dropIfExists('usuarios');
     }

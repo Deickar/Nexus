@@ -14,10 +14,10 @@ return new class extends Migration
         // Crear tabla imagenes_producto
         Schema::create('imagenes_producto', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_imagen')->autoIncrement()->primary();
+            $table->id('id_imagen');
 
             // Clave foranea
-            $table->integer('id_producto')->nullable(false);
+            $table->unsignedBigInteger('id_producto');
             $table->foreign('id_producto')->references('id_producto')->on('productos');
 
             // Campos de datos
@@ -30,6 +30,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('imagenes_praducto',function(Blueprint $table){
+            $table->dropForeign(['id_praducto']);
+        });
         // Eliminar tabla imagenes_producto
         Schema::dropIfExists('imagenes_producto');
     }

@@ -6,12 +6,12 @@ on:
   # Se ejecuta cuando se crea o actualiza un Pull Request que apunta a la rama 'main'.
   # Es ideal para verificar que los cambios no rompen nada antes de integrarlos.
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   # Se ejecuta cuando se hace un 'push' (se suben cambios) directamente a la rama 'main'.
   # Asegura que la rama principal siempre esté en un estado funcional.
   push:
-    branches: [ main ]
+    branches: [main]
 
 # Define el conjunto de trabajos (jobs) que se ejecutarán.
 # Los trabajos se ejecutan en paralelo por defecto, a menos que se especifique una dependencia.
@@ -53,11 +53,11 @@ jobs:
           coverage: none
           # Instala herramientas adicionales. Aquí se instala Composer v2.
           tools: composer:v2
-     
+
       # 3. (Opcional) Verifica la versión de PHP instalada para confirmar que el paso anterior funcionó.
       - name: Check PHP Version
         run: php -v
-        
+
       # 4. Instala las dependencias de PHP definidas en tu archivo 'composer.lock'.
       - name: Install PHP dependencies
         # --prefer-dist: Descarga los paquetes como archivos zip, más rápido.
@@ -70,7 +70,7 @@ jobs:
       # Las aplicaciones de Laravel necesitan este archivo para funcionar.
       - name: Copy .env
         run: cp .env.example .env
-      
+
       # --- 6. CONFIGURACIÓN DE LA BASE DE DATOS PARA PRUEBAS ---
       # Para evitar configurar un servicio de base de datos completo (como MySQL),
       # usamos SQLite, que es una base de datos basada en un solo archivo.
@@ -79,7 +79,7 @@ jobs:
           # 6.1. Asegura que el directorio 'database' exista y crea el archivo vacío para la BD.
           mkdir -p database
           touch database/database.sqlite
-          
+
           # 6.2. Modifica el archivo .env en tiempo de ejecución para usar SQLite.
           # 'sed' es una herramienta de línea de comandos para editar texto.
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
@@ -119,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     # 'needs: backend' crea una dependencia. Este trabajo 'frontend' solo se ejecutará
     # si el trabajo 'backend' ha terminado exitosamente.
-    needs: backend
+    #needs: backend
 
     # Contiene la secuencia de pasos que se ejecutarán en este trabajo.
     steps:
@@ -147,3 +147,4 @@ jobs:
       # Este comando ejecuta el script 'build' definido en tu 'package.json'.
       - name: Build frontend
         run: npm run build
+

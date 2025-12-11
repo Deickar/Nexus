@@ -14,15 +14,16 @@ return new class extends Migration
         // Crear tabla detalle_carrito
         Schema::create('detalle_carrito', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_detalle_carrito')->autoIncrement()->primary();
+            $table->id('id_detalle_carrito');
 
             // Claves foraneas
-            $table->integer('id_carrito')->nullable(false);
-            $table->foreign('id_carrito')->references('id_carrito')->on('carritos');
+            $table->unsignedBigInteger("id_carrito");
+            $table->foreign("id_carrito")->references("id_carrito")->on("carritos");
 
-            $table->integer('id_producto')->nullable(false);
-            $table->foreign('id_producto')->references('id_producto')->on('productos');
+            $table->unsignedBigInteger("id_producto");
+            $table->foreign("id_producto")->references("id_producto")->on("praductos");
 
+            
             // Campos de datos
             $table->integer('cantidad')->nullable(false);
             $table->decimal('precio_unitario', 10, 2)->nullable(false);
@@ -35,6 +36,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+         Schema::table('detalle_carrito',function(Blueprint $table){
+            $table->dropForeign(['id_carrito']);
+            $table->dropForeign(['id_producto']);
+        });
         // Eliminar tabla detalle_carrito
         Schema::dropIfExists('detalle_carrito');
     }

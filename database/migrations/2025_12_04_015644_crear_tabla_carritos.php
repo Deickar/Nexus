@@ -14,11 +14,11 @@ return new class extends Migration
         // Crear tabla carritos
         Schema::create('carritos', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_carrito')->autoIncrement()->primary();
+            $table->id('id_carrito');
 
             // Clave foranea
-            $table->integer('id_usuario')->nullable(false);
-            $table->foreign('id_usuario')->references('id_usuario')->on('usuarios');
+            $table->unsignedBigInteger("id_usuario");
+            $table->foreign("id_usuario")->references("id_usuario")->on("usuarios");
 
             // Campos de datos
             $table->enum('estado', ['abierto', 'cerrado', 'cancelado'])->default('abierto');
@@ -33,7 +33,11 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
-    {
+    {   
+        // Elemina la FK en tabla de carrito
+        Schema::table('carrito',function(Blueprint $table){
+            $table->dropForeign(['id_usuario']);
+        });
         // Eliminar tabla carritos
         Schema::dropIfExists('carritos');
     }

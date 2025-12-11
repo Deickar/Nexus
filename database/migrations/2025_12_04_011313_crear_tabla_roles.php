@@ -14,10 +14,10 @@ return new class extends Migration
         // Crear tabla roles
         Schema::create('roles', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_rol');
+            $table->id('id_rol');
 
             // Campos de datos
-            $table->string('nombre_rol')->nullable(false);
+            $table->string('nombre_rol')->unique();
             $table->string('descripcion')->nullable();
         });
     }

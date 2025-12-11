@@ -14,14 +14,14 @@ return new class extends Migration
         // Crear tabla categorias
         Schema::create('categorias', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_categoria')->autoIncrement()->primary();
+            $table->id('id_categoria');
 
             // Campos de datos
             $table->string('nombre_categoria', 150)->nullable(false);
             $table->string('descripcion', 255)->nullable();
 
             // Clave foranea auto-referencial (categoria padre)
-            $table->integer('id_categoria_padre')->nullable();
+            $table->unsignedBigInteger('id_categoria_padre');
             $table->foreign('id_categoria_padre')->references('id_categoria')->on('categorias');
         });
     }
@@ -31,6 +31,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('categorias', function (Blueprint $table) {
+            $table->dropForeign(['id_categoria_padre']);
+        });
         // Eliminar tabla categorias
         Schema::dropIfExists('categorias');
     }

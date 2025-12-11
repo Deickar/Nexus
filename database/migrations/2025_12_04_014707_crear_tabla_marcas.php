@@ -14,7 +14,7 @@ return new class extends Migration
         // Crear tabla marcas
         Schema::create('marcas', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_marca')->autoIncrement()->primary();
+            $table->id('id_marca');
 
             // Campos de datos
             $table->string('nombre_marca', 150)->nullable(false);

@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use function Laravel\Prompts\table;
+
 return new class extends Migration
 {
     /**
@@ -14,7 +16,7 @@ return new class extends Migration
         // Crear tabla productos
         Schema::create('productos', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_producto')->autoIncrement()->primary();
+            $table->id('id_producto');
 
             // Campos de datos
             $table->string('nombre_producto', 150)->nullable(false);
@@ -24,10 +26,10 @@ return new class extends Migration
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
 
             // Claves foraneas
-            $table->integer('id_categoria')->nullable(false);
+            $table->unsignedBigInteger('id_categoria');
             $table->foreign('id_categoria')->references('id_categoria')->on('categorias');
 
-            $table->integer('id_marca')->nullable(false);
+            $table->unsignedBigInteger('id_marca');
             $table->foreign('id_marca')->references('id_marca')->on('marcas');
 
             // Timestamps
@@ -40,7 +42,11 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
-    {
+    {  
+     Schema::table('productos', function(Blueprint $table){
+        $table->dropForeign(['id_categoria']);
+        $table->dropForeign(['id_marca']);
+    });
         // Eliminar tabla productos
         Schema::dropIfExists('productos');
     }

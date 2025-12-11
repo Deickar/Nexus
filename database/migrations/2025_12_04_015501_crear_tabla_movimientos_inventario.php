@@ -14,12 +14,12 @@ return new class extends Migration
         // Crear tabla movimientos_inventario
         Schema::create('movimientos_inventario', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_movimiento')->autoIncrement()->primary();
+            $table->id('id_movimiento');
 
             // Clave foranea
-            $table->integer('id_producto')->nullable(false);
-            $table->foreign('id_producto')->references('id_producto')->on('productos');
-
+            $table->unsignedBigInteger("id_producto");
+            $table->foreign("id_producto")->references("id_producto")->on("productos");
+            
             // Campos de datos
             $table->enum('tipo_movimiento', ['entrada', 'salida'])->nullable(false);
             $table->integer('cantidad')->nullable(false);
@@ -35,6 +35,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('movimiento_invetario', function(Blueprint $table){
+            $table->dropForeign(['id_praducto']);
+        });
         // Eliminar tabla movimientos_inventario
         Schema::dropIfExists('movimientos_inventario');
     }

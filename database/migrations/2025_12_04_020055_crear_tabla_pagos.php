@@ -14,10 +14,10 @@ return new class extends Migration
         // Crear tabla pagos
         Schema::create('pagos', function (Blueprint $table) {
             // Clave primaria
-            $table->integer('id_pago')->autoIncrement()->primary();
+            $table->id('id_pago');
 
             // Clave foranea
-            $table->integer('id_usuario')->nullable(false);
+            $table->unsignedBigInteger('id_usuario');
             $table->foreign('id_usuario')->references('id_usuario')->on('usuarios');
 
             // Campos de datos
@@ -37,6 +37,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('pagos', function (Blueprint $table) {
+            $table->dropForeign('id_usuario');
+        });
         // Eliminar tabla pagos
         Schema::dropIfExists('pagos');
     }
